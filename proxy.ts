@@ -13,11 +13,15 @@ import { getToken } from "next-auth/jwt";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // On Vercel (HTTPS), NextAuth uses __Secure- prefixed cookie names
+  const secureCookie = process.env.NODE_ENV === "production" || !!process.env.VERCEL_URL;
+
   // ── Protect admin pages (redirect to login) ────────
   if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
+      secureCookie,
     });
 
     if (!token) {
@@ -32,6 +36,7 @@ export async function proxy(request: NextRequest) {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
+      secureCookie,
     });
 
     if (!token) {
