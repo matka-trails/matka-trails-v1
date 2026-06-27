@@ -46,8 +46,8 @@ export default function AdminLoginPage() {
         setTimeout(() => setErrorShake(false), 500);
       } else {
         toast.success("Welcome back, Captain!");
-        router.push("/admin/dashboard");
-        router.refresh();
+        // Hard redirect so the browser sends the newly-set session cookie
+        window.location.href = "/admin/dashboard";
       }
     } catch (err) {
       console.error(err);

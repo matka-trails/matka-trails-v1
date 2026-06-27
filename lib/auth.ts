@@ -3,6 +3,14 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 
+// On Vercel, NEXTAUTH_URL may not be set — detect production via VERCEL_URL
+const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith("https://") ||
+  !!process.env.VERCEL_URL;
+const cookiePrefix = useSecureCookies ? "__Secure-" : "";
+const hostName = process.env.NEXTAUTH_URL
+  ? new URL(process.env.NEXTAUTH_URL).hostname
+  : process.env.VERCEL_URL || "localhost";
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -49,6 +57,19 @@ export const authOptions: NextAuthOptions = {
     maxAge: 7 * 24 * 60 * 60, // 7 days
   },
 
+  cookies: {
+    sessionToken: {
+      name: `${cookiePrefix}next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+        domain: hostName === "localhost" ? undefined : hostName,
+      },
+    },
+  },
+
   callbacks: {
     async jwt({ token, user }) {
       // On initial sign-in, persist custom fields into the JWT
@@ -75,4 +96,10 @@ export const authOptions: NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
+
+  // Allow NextAuth to work without NEXTAUTH_URL on Vercel
+  ...(process.env.VERCEL_URL && !process.env.NEXTAUTH_URL
+    ? { trustHost: true }
+    : {}),
 };
+
