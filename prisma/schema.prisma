@@ -1,0 +1,268 @@
+// Matka Trails — Complete Prisma Schema
+// All models for the travel company backend
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ─────────────────────────────────────────────
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum GroupType {
+  CORPORATE
+  SOLO_GROUP
+  CUSTOM
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CONFIRMED
+  REJECTED
+}
+
+enum LeadSource {
+  WEBSITE_FORM
+  PACKAGE_BOOKING
+}
+
+// ─── Models ────────────────────────────────────────────
+
+model Admin {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         AdminRole @default(ADMIN)
+  avatar       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  blogs Blog[]
+
+  @@map("admins")
+}
+
+model Destination {
+  id              String               @id @default(cuid())
+  name            String
+  slug            String               @unique
+  description     String?              @db.Text
+  coverImage      String?
+  isFeatured      Boolean              @default(false)
+  metaTitle       String?
+  metaDescription String?
+  sortOrder       Int                  @default(0)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  deletedAt       DateTime?
+
+  packages Package[]
+  gallery  DestinationGallery[]
+
+  @@index([isFeatured])
+  @@index([deletedAt])
+  @@map("destinations")
+}
+
+model Package {
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  destinationId   String
+  destination     Destination   @relation(fields: [destinationId], references: [id])
+  summary         String?       @db.Text
+  description     String?       @db.Text
+  durationDays    Int
+  durationNights  Int
+  priceOriginal   Float
+  priceDiscounted Float?
+  pdfUrl          String?
+  coverImage      String?
+  galleryImages   String[]
+  inclusions      String[]
+  exclusions      String[]
+  notes           String?       @db.Text
+  status          PublishStatus @default(DRAFT)
+  groupType       GroupType     @default(SOLO_GROUP)
+  isFeatured      Boolean       @default(false)
+  startDate       DateTime?
+  endDate         DateTime?
+  maxGroupSize    Int?
+  currentBookings Int           @default(0)
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+
+  itinerary    ItineraryDay[]
+  reviews      PackageReview[]
+  testimonials PackageVideoTestimonial[]
+  leads        Lead[]
+  faqs         FAQ[]
+
+  @@index([destinationId])
+  @@index([status])
+  @@index([groupType])
+  @@index([isFeatured])
+  @@index([deletedAt])
+  @@map("packages")
+}
+
+model ItineraryDay {
+  id          String  @id @default(cuid())
+  packageId   String
+  package     Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  dayNumber   Int
+  title       String
+  description String? @db.Text
+  images      String[]
+  sortOrder   Int     @default(0)
+
+  @@index([packageId])
+  @@map("itinerary_days")
+}
+
+model PackageReview {
+  id           String   @id @default(cuid())
+  packageId    String
+  package      Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  customerName String
+  rating       Int
+  reviewText   String?  @db.Text
+  reviewImages String[]
+  isApproved   Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([packageId])
+  @@index([isApproved])
+  @@map("package_reviews")
+}
+
+model PackageVideoTestimonial {
+  id           String  @id @default(cuid())
+  packageId    String
+  package      Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  videoUrl     String
+  customerName String
+  thumbnail    String?
+  sortOrder    Int     @default(0)
+
+  @@index([packageId])
+  @@map("package_video_testimonials")
+}
+
+model DestinationGallery {
+  id            String      @id @default(cuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  imageUrl      String
+  caption       String?
+  sortOrder     Int         @default(0)
+
+  @@index([destinationId])
+  @@map("destination_gallery")
+}
+
+model Lead {
+  id             String     @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  alternatePhone String?
+  city           String?
+  company        String?
+  packageId      String?
+  package        Package?   @relation(fields: [packageId], references: [id])
+  groupSize      Int?
+  preferredDate  String?
+  message        String?    @db.Text
+  status         LeadStatus @default(NEW)
+  source         LeadSource @default(WEBSITE_FORM)
+  adminNotes     String?    @db.Text
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([status])
+  @@index([packageId])
+  @@index([createdAt])
+  @@index([source])
+  @@map("leads")
+}
+
+model Blog {
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  coverImage      String?
+  contentBlocks   Json          @default("[]")
+  tags            String[]
+  status          PublishStatus @default(DRAFT)
+  authorId        String?
+  author          Admin?        @relation(fields: [authorId], references: [id])
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+
+  faqs FAQ[]
+
+  @@index([status])
+  @@index([authorId])
+  @@index([deletedAt])
+  @@map("blogs")
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  blogId    String?
+  blog      Blog?    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  packageId String?
+  package   Package? @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  question  String
+  answer    String   @db.Text
+  sortOrder Int      @default(0)
+
+  @@index([blogId])
+  @@index([packageId])
+  @@map("faqs")
+}
+
+model GalleryItem {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  placeName String
+  caption   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("gallery_items")
+}
+
+model VideoTestimonial {
+  id        String   @id @default(cuid())
+  videoUrl  String
+  title     String
+  thumbnail String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("video_testimonials")
+}
+
