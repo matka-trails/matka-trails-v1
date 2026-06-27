@@ -203,7 +203,7 @@ export default function PackageForm({ initialData }: PackageFormProps) {
       const url = initialData
         ? `/api/admin/packages/${initialData.id}`
         : "/api/admin/packages";
-      const method = initialData ? "PUT" : "POST";
+      const method = initialData ? "PATCH" : "POST";
 
       const res = await fetch(url, {
         method,
@@ -211,8 +211,14 @@ export default function PackageForm({ initialData }: PackageFormProps) {
         body: JSON.stringify(payload),
       });
 
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error?.message || "Failed to save package");
+      let json: any = {};
+      try {
+        const text = await res.text();
+        if (text) json = JSON.parse(text);
+      } catch {
+        // non-JSON or empty body — handled below
+      }
+      if (!res.ok) throw new Error(json.error?.message || json.message || `Server error ${res.status}`);
 
       toast.success(initialData ? "Package updated!" : "New package created!");
       router.push("/admin/packages");

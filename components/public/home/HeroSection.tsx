@@ -104,7 +104,7 @@ export default function HeroSection() {
     center: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
+      transition: { duration: 0.6, ease: "easeOut" as const },
     },
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
   };
