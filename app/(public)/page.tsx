@@ -9,6 +9,7 @@ import WhyMatkaTrails from "@/components/public/home/WhyMatkaTrails";
 import VideoTestimonialsSection from "@/components/public/home/VideoTestimonialsSection";
 import StatsBar from "@/components/public/home/StatsBar";
 import BlogPreview from "@/components/public/home/BlogPreview";
+import ContactSection from "@/components/public/home/ContactSection";
 import QueryProvider from "@/components/shared/QueryProvider";
 
 export default function Home() {
@@ -47,6 +48,9 @@ export default function Home() {
 
         {/* 9. Blogs Grid & call-to-action */}
         <BlogPreview />
+
+        {/* 10. Contact Form */}
+        <ContactSection />
       </div>
     </QueryProvider>
   );

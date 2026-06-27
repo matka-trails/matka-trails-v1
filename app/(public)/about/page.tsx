@@ -13,7 +13,7 @@ export default function AboutPage() {
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
       {/* ── 1. Page Header Hero ── */}
-      <div className="relative w-full h-[280px] bg-black overflow-hidden flex items-center px-6 md:px-16 lg:px-24">
+      <div className="relative w-full h-[280px] bg-black overflow-hidden flex items-center">
         <div className="absolute inset-0 z-0">
           <Image
             src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&q=80&w=1200"
@@ -25,17 +25,19 @@ export default function AboutPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
         </div>
 
-        <div className="relative z-10 space-y-2 text-white">
-          <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
-            <Compass className="w-4 h-4" />
-            <span>OUR ANATOMY</span>
-          </span>
-          <h1 className="font-sans font-black italic text-4xl lg:text-5xl uppercase leading-none tracking-tight">
-            We are <span className="text-primary italic">Matka Trails.</span>
-          </h1>
-          <p className="text-xs lg:text-sm text-white/60 leading-relaxed font-semibold max-w-md">
-            Dedicated to solving the solo travel hurdle for active corporate professionals.
-          </p>
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="space-y-2 text-white">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
+              <Compass className="w-4 h-4" />
+              <span>OUR ANATOMY</span>
+            </span>
+            <h1 className="font-sans font-black italic text-4xl lg:text-5xl uppercase leading-none tracking-tight">
+              We are <span className="text-primary italic">Matka Trails.</span>
+            </h1>
+            <p className="text-xs lg:text-sm text-white/60 leading-relaxed font-semibold max-w-md">
+              Dedicated to solving the solo travel hurdle for active corporate professionals.
+            </p>
+          </div>
         </div>
       </div>
 

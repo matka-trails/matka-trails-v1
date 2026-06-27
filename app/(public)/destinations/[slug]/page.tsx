@@ -65,7 +65,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
       {/* Header Banner */}
-      <div className="relative w-full h-[320px] bg-black overflow-hidden flex items-end pb-8 px-6 md:px-16 lg:px-24">
+      <div className="relative w-full h-[320px] bg-black overflow-hidden flex items-end pb-8">
         {/* Background Image */}
         {destination.coverImage && (
           <div className="absolute inset-0 z-0">
@@ -80,17 +80,19 @@ export default async function DestinationDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        <div className="relative z-10 space-y-2 text-white">
-          <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
-            <Compass className="w-4 h-4" />
-            <span>TERRITORY VIEW</span>
-          </span>
-          <h1 className="font-sans font-black italic text-4xl lg:text-5xl uppercase leading-none tracking-tight">
-            {destination.name}
-          </h1>
-          <div className="flex items-center gap-1 text-xs font-semibold text-white/70">
-            <MapPin className="w-4 h-4 text-primary shrink-0" />
-            <span>{destination.packages.length} Published Trails</span>
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="space-y-2 text-white">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
+              <Compass className="w-4 h-4" />
+              <span>TERRITORY VIEW</span>
+            </span>
+            <h1 className="font-sans font-black italic text-4xl lg:text-5xl uppercase leading-none tracking-tight">
+              {destination.name}
+            </h1>
+            <div className="flex items-center gap-1 text-xs font-semibold text-white/70">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
+              <span>{destination.packages.length} Published Trails</span>
+            </div>
           </div>
         </div>
       </div>

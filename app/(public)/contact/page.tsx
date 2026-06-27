@@ -11,7 +11,7 @@ export default function ContactPage() {
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
       {/* Container */}
-      <div className="max-w-6xl mx-auto px-6 lg:px-12 pt-12 md:pt-16">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-12 md:pt-16">
         
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 bg-white border border-gray-border rounded-3xl overflow-hidden shadow-float">
           

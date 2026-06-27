@@ -5,11 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import { publicApi, PublicDestination } from "@/lib/api";
+import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-// Fallback high-quality destinations if local DB is empty
 const FALLBACK_DESTINATIONS = [
   {
     id: "kedarnath",
@@ -48,20 +47,18 @@ export default function HeroSection() {
   const touchStartX = useRef(0);
   const isMobile = useMediaQuery("(max-width: 1024px)");
 
-  // Fetch real destinations from DB
   useEffect(() => {
     publicApi
       .getDestinations()
       .then((data) => {
         if (data && data.length > 0) {
-          // Map DB keys to match slides
           const mapped = data.map((d) => ({
             id: d.id,
             name: d.name,
             slug: d.slug,
             description: d.description || "Explore beautiful trails and groups with the Captain.",
             coverImage: d.coverImage || FALLBACK_DESTINATIONS[0].coverImage,
-          }));
+          })).slice(0, 5);
           setDestinations(mapped);
         }
       })
@@ -70,13 +67,11 @@ export default function HeroSection() {
 
   const total = destinations.length;
 
-  // Auto-advance logic
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % total);
     }, 5500);
-
     return () => clearInterval(timer);
   }, [total, isPaused]);
 
@@ -88,7 +83,6 @@ export default function HeroSection() {
     setActiveIndex((prev) => (prev - 1 + total) % total);
   };
 
-  // Swiping controls for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -105,21 +99,16 @@ export default function HeroSection() {
     }
   };
 
-  // Staggered text animations
   const textVariants = {
     enter: { opacity: 0, y: 30 },
     center: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut" as any,
-      },
+      transition: { duration: 0.6, ease: "easeOut" },
     },
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
   };
 
-  // Stack of 3 upcoming preview cards
   const card1 = destinations[(activeIndex + 1) % total];
   const card2 = destinations[(activeIndex + 2) % total];
   const card3 = destinations[(activeIndex + 3) % total];
@@ -128,238 +117,230 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative w-full h-[calc(100vh-72px)] min-h-[580px] bg-black overflow-hidden select-none"
+      className="relative w-full h-[calc(100vh-72px)] min-h-[650px] bg-black overflow-hidden select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* ── Background Layer (Crossfading Images) ── */}
+      {/* ── Background Layer ── */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="popLayout">
           <motion.div
             key={activeIndex}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 0.5, scale: 1 }}
+            initial={{ opacity: 0, scale: 1.08 }}
+            animate={{ opacity: 0.45, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.9, ease: "easeInOut" }}
             className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage: `url(${getOptimizedImageUrl(destinations[activeIndex].coverImage, 1920)})`,
             }}
           />
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0d] via-black/30 to-black/20" />
       </div>
 
-      {/* ── Left Timeline Indicators (Desktop Only) ── */}
-      {!isMobile && (
-        <div className="absolute left-8 lg:left-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 z-10">
-          <div className="w-[1px] h-32 bg-white/20 relative">
-            <motion.div
-              className="absolute w-full bg-primary"
-              animate={{
-                top: `${(activeIndex / (total - 1 || 1)) * 100}%`,
-                height: "16px",
-              }}
-              transition={{ duration: 0.4 }}
-            />
-          </div>
-          {destinations.map((d, index) => {
-            const active = index === activeIndex;
-            return (
-              <button
-                key={d.id}
-                onClick={() => setActiveIndex(index)}
-                className="group relative flex items-center justify-center cursor-pointer focus:outline-none"
+      <div className="absolute inset-0 z-10 flex flex-col justify-between">
+        {/* ── Main content row ── */}
+        <div className="flex-1 flex items-center w-full max-w-7xl mx-auto px-6 lg:px-12 gap-12 pt-12">
+          
+          {/* ── Left Indicator Timeline ── */}
+          {!isMobile && (
+            <div className="hidden lg:flex flex-col items-center gap-5 shrink-0 relative pr-4">
+              {destinations.map((d, index) => {
+                const active = index === activeIndex;
+                return (
+                  <button
+                    key={d.id}
+                    onClick={() => setActiveIndex(index)}
+                    className="group relative flex flex-col items-center justify-center cursor-pointer focus:outline-none"
+                  >
+                    {active && (
+                      <span className="absolute -left-8 font-sans font-black text-[11px] text-primary tracking-wider">
+                        {pad(index + 1)}
+                      </span>
+                    )}
+                    <div
+                      className={`w-2 h-2 rounded-full border transition-all duration-300 ${
+                        active ? "bg-primary border-primary scale-125" : "bg-white/30 border-transparent group-hover:bg-white/60"
+                      }`}
+                    />
+                    {index < total - 1 && (
+                      <div className={`w-[1px] h-8 my-1 transition-colors ${active ? 'bg-primary' : 'bg-white/10'}`} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ── Central Details ── */}
+          <div className="flex-1 min-w-0 text-left">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeIndex}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className="space-y-4 max-w-xl"
               >
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-primary uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <span>FEATURED TRAIL</span>
+                </div>
+
+                <div className="overflow-hidden py-1">
+                  <motion.h1
+                    variants={textVariants}
+                    className="font-sans font-black text-5xl md:text-7xl lg:text-8xl text-white uppercase leading-none tracking-tight"
+                  >
+                    {destinations[activeIndex].name.split(" ")[0]}
+                    <span className="text-primary">.</span>
+                  </motion.h1>
+                </div>
+
+                <motion.p
+                  variants={textVariants}
+                  className="text-sm md:text-base text-white/60 max-w-md leading-relaxed font-normal"
+                >
+                  {destinations[activeIndex].description}
+                </motion.p>
+
+                <motion.div variants={textVariants} className="pt-4">
+                  <Link
+                    href={`/destinations/${destinations[activeIndex].slug}`}
+                    className="inline-flex items-center gap-3 bg-primary hover:bg-orange-600 text-white font-bold text-xs tracking-widest uppercase px-7 py-3.5 rounded-full transition-all duration-200"
+                  >
+                    <span>Explore Package</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* ── Right Floating Cards Dashboard ── */}
+          {!isMobile && (
+            <div className="hidden lg:flex items-end shrink-0 gap-4 self-center pt-8" style={{ width: "420px" }}>
+              
+              {/* Card 1 — Active / Primary Preview */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="text-center w-full px-2">
+                  <span className="text-[9px] font-black text-primary uppercase tracking-widest block mb-0.5">NEXT UP</span>
+                  <p className="text-white font-extrabold text-[13px] uppercase tracking-wide truncate max-w-[160px]">{card1.name}</p>
+                  <div className="flex gap-1 mt-1.5 justify-center">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <span key={i} className={`w-1.5 h-1 rounded-full ${i === 0 ? 'bg-primary' : 'bg-white/20'}`} />
+                    ))}
+                  </div>
+                </div>
+                <motion.div
+                  onClick={() => setActiveIndex((activeIndex + 1) % total)}
+                  layoutId={`card-${card1.id}`}
+                  className="w-[170px] h-[250px] rounded-3xl overflow-hidden relative cursor-pointer border border-white/10 shadow-2xl hover:scale-[1.03] transition-all duration-300 z-20"
+                >
+                  <Image src={getOptimizedImageUrl(card1.coverImage, 400)} alt={card1.name} fill className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                </motion.div>
+              </div>
+
+              {/* Card 2 — Balanced Secondary */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="text-center w-full px-2 opacity-70">
+                  <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest block mb-0.5">&nbsp;</span>
+                  <p className="text-white/90 font-bold text-xs uppercase tracking-wide truncate max-w-[120px]">{card2.name}</p>
+                  <div className="flex gap-1 mt-1.5 justify-center">
+                    {[0, 1, 2, 3].map((i) => (
+                      <span key={i} className="w-1 h-1 rounded-full bg-white/20" />
+                    ))}
+                  </div>
+                </div>
                 <div
-                  className={`w-2.5 h-2.5 rounded-full border border-white/40 transition-all duration-300 ${
-                    active
-                      ? "bg-primary border-primary scale-125 shadow-orange"
-                      : "bg-transparent group-hover:border-white"
+                  onClick={() => setActiveIndex((activeIndex + 2) % total)}
+                  className="w-[125px] h-[190px] rounded-2xl overflow-hidden relative cursor-pointer border border-white/5 opacity-60 hover:opacity-100 transition-all duration-300 z-10"
+                >
+                  <Image src={getOptimizedImageUrl(card2.coverImage, 400)} alt={card2.name} fill className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+              </div>
+
+              {/* Card 3 — Smallest Background Element */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="text-center w-full opacity-40">
+                  <p className="text-white/60 font-bold text-[10px] uppercase tracking-wide truncate max-w-[80px]">{card3.name}</p>
+                </div>
+                <div
+                  onClick={() => setActiveIndex((activeIndex + 3) % total)}
+                  className="w-[85px] h-[140px] rounded-2xl overflow-hidden relative cursor-pointer border border-white/5 opacity-30 hover:opacity-80 transition-all duration-300 z-0"
+                >
+                  <Image src={getOptimizedImageUrl(card3.coverImage, 400)} alt={card3.name} fill className="object-cover" />
+                </div>
+              </div>
+
+            </div>
+          )}
+        </div>
+
+        {/* ── Bottom Control Panel Row ── */}
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 pb-10 flex items-center justify-between z-20">
+          
+          {/* Mobile Dot Indicators or Left Page Count */}
+          {isMobile ? (
+            <div className="flex gap-2">
+              {destinations.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveIndex(index)}
+                  className={`h-2 rounded-full transition-all ${
+                    index === activeIndex ? "bg-primary w-5" : "bg-white/30 w-2"
                   }`}
                 />
-                {active && (
-                  <span className="absolute left-6 font-sans font-bold text-[10px] text-primary tracking-widest">
-                    {pad(index + 1)}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* ── Central Details & CTA ── */}
-      <div className="absolute inset-0 flex items-center px-6 md:px-16 lg:px-24 z-10">
-        <div className="w-full lg:max-w-2xl text-left">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              className="space-y-4"
-            >
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-primary/20 border border-primary/40 rounded-pill px-4 py-1.5 text-[10px] font-bold text-primary uppercase tracking-widest">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span>FEATURED TRAIL</span>
-              </div>
-
-              {/* Title Mask Reveal */}
-              <div className="overflow-hidden py-1">
-                <motion.h1
-                  variants={textVariants}
-                  className="font-sans font-black italic text-5xl md:text-7xl lg:text-8xl text-white uppercase leading-none tracking-tighter"
-                >
-                  {destinations[activeIndex].name.split(" ")[0]}
-                  <span className="text-primary font-black">
-                    .
-                  </span>
-                </motion.h1>
-              </div>
-
-              {/* Description */}
-              <motion.p
-                variants={textVariants}
-                className="text-sm md:text-base text-white/70 max-w-lg leading-relaxed font-semibold"
-              >
-                {destinations[activeIndex].description}
-              </motion.p>
-
-              {/* CTA Button */}
-              <motion.div variants={textVariants} className="pt-4">
-                <Link
-                  href={`/packages?destinationId=${destinations[activeIndex].id}`}
-                  className="inline-flex items-center gap-3 bg-primary hover:bg-primary-dark text-white font-bold text-sm tracking-wide uppercase px-8 py-4 rounded-xl shadow-orange hover:-translate-y-0.5 transition-all duration-200"
-                >
-                  <span>Explore Package</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* ── Right Floating Cards Stack (Desktop Only) ── */}
-      {!isMobile && (
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center pr-8 lg:pr-12 gap-4 z-10">
-          <div className="flex items-center gap-[-40px]">
-            {/* Card 1 */}
-            <motion.div
-              onClick={() => setActiveIndex((activeIndex + 1) % total)}
-              layoutId={`card-${card1.id}`}
-              className="w-[200px] h-[300px] rounded-2xl overflow-hidden relative cursor-pointer shadow-float hover:scale-102 border border-white/10 transition-all z-20 shrink-0"
-            >
-              <Image
-                src={getOptimizedImageUrl(card1.coverImage, 400)}
-                alt={card1.name}
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
-                <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
-                  NEXT UP
-                </span>
-                <h3 className="text-white font-bold text-sm truncate uppercase mt-0.5">
-                  {card1.name}
-                </h3>
-              </div>
-            </motion.div>
-
-            {/* Card 2 */}
-            <div
-              onClick={() => setActiveIndex((activeIndex + 2) % total)}
-              className="w-[180px] h-[270px] rounded-2xl overflow-hidden relative cursor-pointer shadow-float border border-white/5 opacity-70 hover:opacity-90 scale-95 -ml-8 transition-all z-10 shrink-0"
-            >
-              <Image
-                src={getOptimizedImageUrl(card2.coverImage, 400)}
-                alt={card2.name}
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
-                <h3 className="text-white font-bold text-xs truncate uppercase">
-                  {card2.name}
-                </h3>
-              </div>
+              ))}
             </div>
-
-            {/* Card 3 (Half Peek) */}
-            <div
-              onClick={() => setActiveIndex((activeIndex + 3) % total)}
-              className="w-[160px] h-[240px] rounded-2xl overflow-hidden relative cursor-pointer shadow-float border border-white/5 opacity-40 hover:opacity-60 scale-90 -ml-8 transition-all z-0 shrink-0"
-            >
-              <Image
-                src={getOptimizedImageUrl(card3.coverImage, 400)}
-                alt={card3.name}
-                fill
-                className="object-cover"
-              />
+          ) : (
+            <div className="font-sans font-black text-sm tracking-widest text-white/40">
+              <span className="text-white">{pad(activeIndex + 1)}</span> / {pad(total)}
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* ── Mobile Dot Indicators & Swiping chips (Mobile Only) ── */}
-      {isMobile && (
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
-          {destinations.map((_, index) => (
+          {/* Centered Arrow Navigation Controls right under cards */}
+          <div className="flex gap-2 lg:mr-[220px]">
             <button
-              key={index}
-              onClick={() => setActiveIndex(index)}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${
-                index === activeIndex
-                  ? "bg-primary w-6 shadow-orange"
-                  : "bg-white/40"
-              }`}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* ── Bottom Control Panel ── */}
-      <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between z-10 md:left-16 md:right-16 lg:left-24 lg:right-24">
-        {/* Count */}
-        <div className="font-sans font-extrabold text-sm text-white/50 tracking-wider">
-          <span className="text-white">{pad(activeIndex + 1)}</span> / {pad(total)}
-        </div>
-
-        {/* Arrow Controls */}
-        <div className="flex gap-3">
-          <button
-            onClick={handlePrev}
-            className="w-11 h-11 rounded-full border border-white/20 hover:border-primary hover:bg-primary/10 flex items-center justify-center text-white hover:text-primary transition-all duration-200 cursor-pointer"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={handleNext}
-            className="w-11 h-11 rounded-full border border-white/20 hover:border-primary hover:bg-primary/10 flex items-center justify-center text-white hover:text-primary transition-all duration-200 cursor-pointer"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Progress Fill */}
-        <div className="hidden md:flex items-center gap-3">
-          <span className="text-[10px] font-bold text-white/40">01</span>
-          <div className="w-32 h-[3px] bg-white/20 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary transition-all duration-500"
-              style={{ width: `${((activeIndex + 1) / total) * 100}%` }}
-            />
+              onClick={handlePrev}
+              className="w-10 h-10 rounded-full border border-white/10 hover:border-white/30 bg-white/[0.02] flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="w-10 h-10 rounded-full border border-white/10 hover:border-white/30 bg-white/[0.02] flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
-          <span className="text-[10px] font-bold text-white/40">{pad(total)}</span>
+
+          {/* Right Linear Progress bar exactly matching Foxico */}
+          <div className="hidden md:flex items-center gap-3">
+            <span className="text-[10px] font-bold text-white/30">01</span>
+            <div className="w-28 h-[2px] bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-500 ease-out"
+                style={{ width: `${((activeIndex + 1) / total) * 100}%` }}
+              />
+            </div>
+            <span className="text-[10px] font-bold text-white/30">{pad(total)}</span>
+          </div>
         </div>
       </div>
 
-      {/* Background Ghost Title */}
-      <div className="absolute bottom-20 left-6 md:left-16 lg:left-24 font-sans font-black italic text-8xl text-white/[0.03] uppercase tracking-tighter pointer-events-none select-none select-none">
-        {destinations[activeIndex].name.split(" ")[0]}
+      {/* Large Ambient Watermark Title */}
+      <div className="absolute bottom-24 left-0 right-0 z-0 pointer-events-none overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <span className="font-sans font-black text-9xl text-white/[0.02] uppercase tracking-tighter block select-none">
+            {destinations[activeIndex].name.split(" ")[0]}
+          </span>
+        </div>
       </div>
     </section>
   );

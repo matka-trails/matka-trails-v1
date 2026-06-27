@@ -144,11 +144,11 @@ html.lenis, html.lenis body {
 }
 
 .animate-tick-left {
-  animation: tickLeft 22s linear infinite;
+  animation: tickLeft 55s linear infinite;
 }
 
 .animate-tick-right {
-  animation: tickRight 22s linear infinite;
+  animation: tickRight 55s linear infinite;
 }
 
 .animate-shake {

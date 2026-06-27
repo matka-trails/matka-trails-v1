@@ -88,7 +88,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
       {/* ── Section A: Immersive Banner Hero ── */}
-      <div className="relative w-full h-[380px] md:h-[460px] bg-black overflow-hidden flex items-end pb-10 px-6 md:px-16 lg:px-24">
+      <div className="relative w-full h-[380px] md:h-[460px] bg-black overflow-hidden flex items-end pb-10">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -102,31 +102,33 @@ export default async function PackageDetailPage({ params }: PageProps) {
         </div>
 
         {/* Hero details overlay */}
-        <div className="relative z-10 space-y-3.5 text-white w-full max-w-4xl">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="bg-primary text-white text-[9px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-pill shadow-orange">
-              {pkg.groupType}
-            </span>
-            <span className="flex items-center gap-1 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded text-xs font-semibold border border-white/10">
-              <Compass className="w-3.5 h-3.5 text-primary shrink-0" />
-              <span>{pkg.durationDays}D / {pkg.durationNights}N</span>
-            </span>
-          </div>
-
-          <h1 className="font-sans font-black italic text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight">
-            {pkg.title}
-          </h1>
-
-          <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-white/80">
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-primary shrink-0" />
-              <span>{pkg.destination?.name} Territory</span>
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="space-y-3.5 text-white max-w-4xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="bg-primary text-white text-[9px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-pill shadow-orange">
+                {pkg.groupType}
+              </span>
+              <span className="flex items-center gap-1 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded text-xs font-semibold border border-white/10">
+                <Compass className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span>{pkg.durationDays}D / {pkg.durationNights}N</span>
+              </span>
             </div>
-            <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-primary text-primary shrink-0" />
-              <span>4.8 Rating</span>
-              <span className="text-white/40">({pkg.reviews.length} approved reviews)</span>
+
+            <h1 className="font-sans font-black italic text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight">
+              {pkg.title}
+            </h1>
+
+            <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-white/80">
+              <div className="flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-primary shrink-0" />
+                <span>{pkg.destination?.name} Territory</span>
+              </div>
+              <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 fill-primary text-primary shrink-0" />
+                <span>4.8 Rating</span>
+                <span className="text-white/40">({pkg.reviews.length} approved reviews)</span>
+              </div>
             </div>
           </div>
         </div>

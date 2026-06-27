@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Compass, Sparkles, MoveRight } from "lucide-react";
-import { publicApi, PublicDestination } from "@/lib/api";
+import { publicApi } from "@/lib/api";
 import { cn, getOptimizedImageUrl } from "@/lib/utils";
 
 const FALLBACK_DESTINATIONS = [
@@ -66,9 +66,14 @@ export default function DestinationsGrid() {
       .catch((err) => console.log("Using fallback grid destinations", err));
   }, []);
 
+  // Max 6 on desktop, but show all on the destinations page
+  const MAX_CARDS = 6;
+  const shown = destinations.slice(0, MAX_CARDS);
+  const hasMore = destinations.length > MAX_CARDS;
+
   return (
-    <section className="w-full py-20 px-6 lg:px-12 bg-white">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <section className="w-full py-16 px-4 md:px-6 lg:px-12 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto space-y-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
           <div className="space-y-3">
@@ -92,20 +97,20 @@ export default function DestinationsGrid() {
           </div>
         </div>
 
-        {/* Masonry / Pinterest-Style Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {destinations.slice(0, 5).map((d, index) => {
-            // First item spans 2 columns
+        {/* Grid — Desktop: masonry/pinterest, Mobile: 2×2 */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {shown.map((d, index) => {
+            // First item spans 2 columns on desktop
             const isFeatured = index === 0;
             return (
               <Link
                 key={d.id}
-                href={`/packages?destinationId=${d.id}`}
+                href={`/destinations/${d.slug}`}
                 className={cn(
                   "group relative rounded-2xl overflow-hidden border border-gray-border shadow-card bg-gray-bg block",
                   isFeatured
-                    ? "sm:col-span-2 h-[260px] md:h-[340px]"
-                    : "h-[200px] md:h-[260px]"
+                    ? "col-span-2 h-[200px] md:h-[340px]"
+                    : "h-[160px] md:h-[260px]"
                 )}
               >
                 {/* Background image */}
@@ -120,24 +125,37 @@ export default function DestinationsGrid() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent group-hover:from-primary/60 transition-colors duration-300" />
 
                 {/* Info Text overlays */}
-                <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between z-10 text-white">
+                <div className="absolute bottom-3 left-3 right-3 md:bottom-4 md:left-4 md:right-4 flex items-end justify-between z-10 text-white">
                   <div>
-                    <h3 className="font-sans font-extrabold text-lg lg:text-xl uppercase leading-none truncate max-w-[200px]">
+                    <h3 className="font-sans font-extrabold text-base md:text-xl uppercase leading-none truncate max-w-[180px]">
                       {d.name}
                     </h3>
-                    <span className="text-[10px] text-white/60 font-bold uppercase tracking-wider block mt-1">
+                    <span className="text-[9px] md:text-[10px] text-white/60 font-bold uppercase tracking-wider block mt-0.5">
                       {d.packagesCount} {d.packagesCount === 1 ? "trail" : "trails"} available
                     </span>
                   </div>
 
-                  <div className="w-8 h-8 rounded-full bg-white/10 group-hover:bg-white flex items-center justify-center text-white group-hover:text-primary transition-all">
-                    <MoveRight className="w-4 h-4" />
+                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 group-hover:bg-white flex items-center justify-center text-white group-hover:text-primary transition-all shrink-0">
+                    <MoveRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
               </Link>
             );
           })}
         </div>
+
+        {/* Explore More button if more than 6 destinations */}
+        {hasMore && (
+          <div className="flex justify-center pt-2">
+            <Link
+              href="/destinations"
+              className="inline-flex items-center gap-2 bg-primary text-white font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl shadow-orange hover:bg-primary-dark transition-colors"
+            >
+              <Compass className="w-4 h-4" />
+              <span>Explore More Destinations</span>
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -63,7 +63,7 @@ export default async function BlogDetailPage({ params }: PageProps) {
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
       {/* ── Page Header Hero Cover ── */}
-      <div className="relative w-full h-[320px] md:h-[400px] bg-black overflow-hidden flex items-end pb-8 px-6 md:px-16 lg:px-24">
+      <div className="relative w-full h-[320px] md:h-[400px] bg-black overflow-hidden flex items-end pb-8">
         {/* Background Image */}
         {blog.coverImage && (
           <div className="absolute inset-0 z-0">
@@ -78,33 +78,35 @@ export default async function BlogDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        <div className="relative z-10 space-y-3 text-white w-full max-w-4xl">
-          <div className="flex flex-wrap items-center gap-2">
-            {blog.tags.map((tag) => (
-              <span
-                key={tag}
-                className="bg-primary text-white text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-
-          <h1 className="font-sans font-black italic text-3xl md:text-5xl uppercase leading-none tracking-tight">
-            {blog.title}
-          </h1>
-
-          <div className="flex items-center gap-4 text-xs font-semibold text-white/70">
-            <div className="flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-primary shrink-0" />
-              <span>{formatDate(blog.createdAt)}</span>
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="space-y-3 text-white max-w-4xl">
+            <div className="flex flex-wrap items-center gap-2">
+              {blog.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-primary text-white text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded"
+                >
+                  #{tag}
+                </span>
+              ))}
             </div>
-            {blog.author && (
-              <>
-                <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
-                <span>Written by {blog.author.name}</span>
-              </>
-            )}
+
+            <h1 className="font-sans font-black italic text-3xl md:text-5xl uppercase leading-none tracking-tight">
+              {blog.title}
+            </h1>
+
+            <div className="flex items-center gap-4 text-xs font-semibold text-white/70">
+              <div className="flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-primary shrink-0" />
+                <span>{formatDate(blog.createdAt)}</span>
+              </div>
+              {blog.author && (
+                <>
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+                  <span>Written by {blog.author.name}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

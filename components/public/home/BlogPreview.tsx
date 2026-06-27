@@ -41,7 +41,7 @@ export default function BlogPreview() {
 
   useEffect(() => {
     publicApi
-      .getBlogs({ limit: 3 })
+      .getBlogs({ limit: 9 })
       .then((data) => {
         if (data && data.length > 0) {
           const mapped = data.map((b) => ({
@@ -86,13 +86,13 @@ export default function BlogPreview() {
             </div>
           </div>
 
-          {/* Blogs Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogs.slice(0, 3).map((blog) => (
+          {/* Blogs Grid - 3×3 up to 9 cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+            {blogs.slice(0, 9).map((blog) => (
               <Link
                 key={blog.id}
                 href={`/blog/${blog.slug}`}
-                className="group flex flex-col bg-white border border-gray-border hover:border-primary/20 hover:shadow-card hover:-translate-y-1.5 transition-all duration-300 rounded-2xl overflow-hidden h-[380px]"
+                className="group flex flex-col bg-white border border-gray-border hover:border-primary/20 hover:shadow-card hover:-translate-y-1.5 transition-all duration-300 rounded-2xl overflow-hidden cursor-pointer"
               >
                 {/* Image */}
                 <div className="h-[180px] relative overflow-hidden bg-gray-bg shrink-0">
@@ -110,7 +110,7 @@ export default function BlogPreview() {
                 </div>
 
                 {/* Body info */}
-                <div className="p-5 flex-1 flex flex-col justify-between">
+                <div className="p-5 flex flex-col justify-between gap-3 flex-1">
                   <div className="space-y-2">
                     <div className="flex items-center gap-4 text-[10px] text-gray-light font-bold uppercase tracking-wider">
                       <span className="flex items-center gap-1.5">
@@ -128,13 +128,24 @@ export default function BlogPreview() {
                     </h3>
                   </div>
 
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1">
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1 mt-auto pt-2">
                     <span>Read Article</span>
                     <MoveRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </div>
               </Link>
             ))}
+          </div>
+
+          {/* View All Articles Button */}
+          <div className="flex justify-center pt-4">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 border-2 border-primary text-primary font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl hover:bg-primary hover:text-white transition-colors"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>View All Articles</span>
+            </Link>
           </div>
         </div>
       </section>

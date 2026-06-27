@@ -28,7 +28,7 @@ export default async function DestinationsPage() {
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
       {/* Header Banner */}
-      <div className="relative w-full h-[240px] bg-black overflow-hidden flex items-center px-6 md:px-16 lg:px-24">
+      <div className="relative w-full h-[240px] bg-black overflow-hidden flex items-center">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -41,17 +41,19 @@ export default async function DestinationsPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
         </div>
 
-        <div className="relative z-10 space-y-2 text-white">
-          <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
-            <Compass className="w-4 h-4" />
-            <span>TERRITORY DIRECTORY</span>
-          </span>
-          <h1 className="font-sans font-black italic text-4xl lg:text-5xl uppercase leading-none tracking-tight">
-            Explore <span className="text-primary italic">Territories.</span>
-          </h1>
-          <p className="text-xs lg:text-sm text-white/60 leading-relaxed font-semibold max-w-md">
-            Find trails grouped by regions. From spiritual high altitude treks to river camping and rafting weekenders.
-          </p>
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="space-y-2 text-white">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
+              <Compass className="w-4 h-4" />
+              <span>TERRITORY DIRECTORY</span>
+            </span>
+            <h1 className="font-sans font-black italic text-4xl lg:text-5xl uppercase leading-none tracking-tight">
+              Explore <span className="text-primary italic">Territories.</span>
+            </h1>
+            <p className="text-xs lg:text-sm text-white/60 leading-relaxed font-semibold max-w-md">
+              Find trails grouped by regions. From spiritual high altitude treks to river camping and rafting weekenders.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -74,7 +76,7 @@ export default async function DestinationsPage() {
             {destinations.map((d) => (
               <Link
                 key={d.id}
-                href={`/packages?destinationId=${d.id}`}
+                href={`/destinations/${d.slug}`}
                 className="group relative rounded-2xl overflow-hidden border border-gray-border shadow-card bg-gray-bg h-[240px] md:h-[280px]"
               >
                 {/* Background image */}
