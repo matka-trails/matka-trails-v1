@@ -4,44 +4,13 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Compass } from "lucide-react";
 import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const FALLBACK_DESTINATIONS = [
-  {
-    id: "kedarnath",
-    name: "Kedarnath Trek",
-    slug: "kedarnath",
-    description: "Trek through the spiritual trails of Himalayas. A journey of faith, pristine snow-capped peaks, and high-altitude lakes.",
-    coverImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&q=80&w=1200",
-  },
-  {
-    id: "rishikesh",
-    name: "Rishikesh Adventure",
-    slug: "rishikesh",
-    description: "Conquer the rapids of Ganges, camp under the stars, and feel the adrenaline in India's official adventure capital.",
-    coverImage: "https://images.unsplash.com/photo-1598977123418-45f04b616a0e?auto=format&fit=crop&q=80&w=1200",
-  },
-  {
-    id: "manali",
-    name: "Manali Explorer",
-    slug: "manali",
-    description: "Hampta pass climbs, scenic solang valleys, hot water springs, and rustic wooden cottage stays amidst pine forests.",
-    coverImage: "https://images.unsplash.com/photo-1626621340025-013b242d2b51?auto=format&fit=crop&q=80&w=1200",
-  },
-  {
-    id: "spiti",
-    name: "Spiti Cold Desert",
-    slug: "spiti",
-    description: "Navigate through treacherous mud monasteries, wind-blown canyons, and high pass terrains in the trans-Himalayan desert.",
-    coverImage: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&q=80&w=1200",
-  },
-];
-
 export default function HeroSection() {
-  const [destinations, setDestinations] = useState<any[]>(FALLBACK_DESTINATIONS);
+  const [destinations, setDestinations] = useState<any[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(0);
@@ -57,23 +26,32 @@ export default function HeroSection() {
             name: d.name,
             slug: d.slug,
             description: d.description || "Explore beautiful trails and groups with the Captain.",
-            coverImage: d.coverImage || FALLBACK_DESTINATIONS[0].coverImage,
+            coverImage: d.coverImage || "",
           })).slice(0, 5);
           setDestinations(mapped);
         }
       })
-      .catch((err) => console.log("Using fallback hero destinations", err));
+      .catch((err) => console.log("Failed to fetch destinations", err));
   }, []);
 
   const total = destinations.length;
 
   useEffect(() => {
-    if (isPaused) return;
+    if (total === 0 || isPaused) return;
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % total);
     }, 5500);
     return () => clearInterval(timer);
   }, [total, isPaused]);
+
+  if (total === 0) {
+    return (
+      <section className="relative w-full h-[calc(100vh-72px)] min-h-[650px] bg-black flex flex-col items-center justify-center gap-4">
+        <Compass className="w-12 h-12 text-primary animate-pulse" />
+        <span className="text-xs text-white/50 tracking-widest font-semibold uppercase">Loading Adventures...</span>
+      </section>
+    );
+  }
 
   const handleNext = () => {
     setActiveIndex((prev) => (prev + 1) % total);
@@ -124,19 +102,21 @@ export default function HeroSection() {
       onTouchEnd={handleTouchEnd}
     >
       {/* ── Background Layer ── */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 bg-[#0c0c0d]">
         <AnimatePresence mode="popLayout">
-          <motion.div
-            key={activeIndex}
-            initial={{ opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 0.45, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.9, ease: "easeInOut" }}
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${getOptimizedImageUrl(destinations[activeIndex].coverImage, 1920)})`,
-            }}
-          />
+          {destinations[activeIndex].coverImage && (
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, scale: 1.08 }}
+              animate={{ opacity: 0.45, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.9, ease: "easeInOut" }}
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${getOptimizedImageUrl(destinations[activeIndex].coverImage, 1920)})`,
+              }}
+            />
+          )}
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0d] via-black/30 to-black/20" />
       </div>
@@ -238,9 +218,11 @@ export default function HeroSection() {
                 <motion.div
                   onClick={() => setActiveIndex((activeIndex + 1) % total)}
                   layoutId={`card-${card1.id}`}
-                  className="w-[170px] h-[250px] rounded-3xl overflow-hidden relative cursor-pointer border border-white/10 shadow-2xl hover:scale-[1.03] transition-all duration-300 z-20"
+                  className="w-[170px] h-[250px] rounded-3xl overflow-hidden relative cursor-pointer border border-white/10 shadow-2xl hover:scale-[1.03] transition-all duration-300 z-20 bg-gray-900"
                 >
-                  <Image src={getOptimizedImageUrl(card1.coverImage, 400)} alt={card1.name} fill className="object-cover" />
+                  {card1.coverImage && (
+                    <Image src={getOptimizedImageUrl(card1.coverImage, 400)} alt={card1.name} fill sizes="170px" className="object-cover" />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 </motion.div>
               </div>
@@ -258,9 +240,11 @@ export default function HeroSection() {
                 </div>
                 <div
                   onClick={() => setActiveIndex((activeIndex + 2) % total)}
-                  className="w-[125px] h-[190px] rounded-2xl overflow-hidden relative cursor-pointer border border-white/5 opacity-60 hover:opacity-100 transition-all duration-300 z-10"
+                  className="w-[125px] h-[190px] rounded-2xl overflow-hidden relative cursor-pointer border border-white/5 opacity-60 hover:opacity-100 transition-all duration-300 z-10 bg-gray-900"
                 >
-                  <Image src={getOptimizedImageUrl(card2.coverImage, 400)} alt={card2.name} fill className="object-cover" />
+                  {card2.coverImage && (
+                    <Image src={getOptimizedImageUrl(card2.coverImage, 400)} alt={card2.name} fill sizes="125px" className="object-cover" />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 </div>
               </div>
@@ -272,9 +256,11 @@ export default function HeroSection() {
                 </div>
                 <div
                   onClick={() => setActiveIndex((activeIndex + 3) % total)}
-                  className="w-[85px] h-[140px] rounded-2xl overflow-hidden relative cursor-pointer border border-white/5 opacity-30 hover:opacity-80 transition-all duration-300 z-0"
+                  className="w-[85px] h-[140px] rounded-2xl overflow-hidden relative cursor-pointer border border-white/5 opacity-30 hover:opacity-80 transition-all duration-300 z-0 bg-gray-900"
                 >
-                  <Image src={getOptimizedImageUrl(card3.coverImage, 400)} alt={card3.name} fill className="object-cover" />
+                  {card3.coverImage && (
+                    <Image src={getOptimizedImageUrl(card3.coverImage, 400)} alt={card3.name} fill sizes="85px" className="object-cover" />
+                  )}
                 </div>
               </div>
 
@@ -304,7 +290,7 @@ export default function HeroSection() {
             </div>
           )}
 
-          {/* Centered Arrow Navigation Controls right under cards */}
+          {/* Controls */}
           <div className="flex gap-2 lg:mr-[220px]">
             <button
               onClick={handlePrev}
@@ -320,7 +306,7 @@ export default function HeroSection() {
             </button>
           </div>
 
-          {/* Right Linear Progress bar exactly matching Foxico */}
+          {/* Progress bar */}
           <div className="hidden md:flex items-center gap-3">
             <span className="text-[10px] font-bold text-white/30">01</span>
             <div className="w-28 h-[2px] bg-white/10 rounded-full overflow-hidden">

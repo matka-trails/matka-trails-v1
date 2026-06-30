@@ -64,14 +64,16 @@ export default async function PackageDetailPage({ params }: PageProps) {
       {/* ── Section A: Immersive Banner Hero ── */}
       <div className="relative w-full h-[380px] md:h-[460px] bg-black overflow-hidden flex items-end pb-10">
         {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={getOptimizedImageUrl(pkg.coverImage || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1200", 1920)}
-            alt={pkg.title}
-            fill
-            className="object-cover opacity-50"
-            priority
-          />
+        <div className="absolute inset-0 z-0 bg-neutral-900">
+          {pkg.coverImage && (
+            <Image
+              src={getOptimizedImageUrl(pkg.coverImage, 1920)}
+              alt={pkg.title}
+              fill
+              className="object-cover opacity-50"
+              priority
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
         </div>
 

@@ -14,6 +14,7 @@ import {
   Menu,
   ChevronRight,
   Camera,
+  ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -129,7 +130,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between">
             <Link href="/" onClick={() => setMobileOpen(false)}>
               <div className="h-8 w-[120px] relative overflow-hidden rounded">
-                <Image src="/logo1.png" alt="Matka Trails" fill className="object-cover" />
+                <Image src="/logo1.png" alt="Matka Trails" fill sizes="120px" className="object-cover" />
               </div>
             </Link>
           </div>

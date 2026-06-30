@@ -40,6 +40,9 @@ export function getOptimizedImageUrl(url: string | null | undefined, width?: num
   if (!url) return "";
   if (!url.includes("cloudinary.com")) return url;
 
+  // Guard: if already transformed (contains f_auto after /upload/), return as-is
+  if (/\/upload\/[^/]*f_auto/.test(url)) return url;
+
   let transformation = "f_auto,q_auto";
   if (width) {
     transformation += `,w_${width},c_limit`;

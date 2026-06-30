@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { publicApi, PublicPackage } from "@/lib/api";
 import PackageCard from "../packages/PackageCard";
@@ -9,6 +10,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Sparkles, MoveRight, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 export default function PackagesSection() {
+  const router = useRouter();
   const [packages, setPackages] = useState<PublicPackage[]>([]);
   const isMobile = useMediaQuery("(max-width: 1024px)");
   const [startIndex, setStartIndex] = useState(0);
@@ -86,10 +88,12 @@ export default function PackagesSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full min-h-[480px]">
             {visibleItems.map((item, idx) =>
               item.type === "package" ? (
-                <div key={item.data.id} className="w-full">
-                  <Link href={`/packages/${item.data.slug}`}>
-                    <PackageCard pkg={item.data} className="shadow-sm hover:shadow-md transition-all cursor-pointer h-full" />
-                  </Link>
+                <div
+                  key={item.data.id}
+                  className="w-full cursor-pointer"
+                  onClick={() => router.push(`/packages/${item.data.slug}`)}
+                >
+                  <PackageCard pkg={item.data} className="shadow-sm hover:shadow-md transition-all h-full" />
                 </div>
               ) : (
                 <div
@@ -134,12 +138,15 @@ export default function PackagesSection() {
           <CardFanDeck
             items={packages}
             renderCard={(pkg, isTop) => (
-              <Link href={`/packages/${pkg.slug}`}>
+              <div
+                className="cursor-pointer w-full h-full"
+                onClick={() => router.push(`/packages/${pkg.slug}`)}
+              >
                 <PackageCard
                   pkg={pkg}
                   className={`shadow-float transition-shadow duration-300 ${isTop ? "shadow-lg" : ""}`}
                 />
-              </Link>
+              </div>
             )}
           />
 

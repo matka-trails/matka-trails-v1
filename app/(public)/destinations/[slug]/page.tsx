@@ -62,6 +62,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
               src={getOptimizedImageUrl(destination.coverImage, 1920)}
               alt={destination.name}
               fill
+              sizes="100vw"
               className="object-cover opacity-50"
               priority
             />
@@ -116,7 +117,9 @@ export default async function DestinationDetailPage({ params }: PageProps) {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {mappedPackages.map((pkg) => (
-                  <PackageCard key={pkg.id} pkg={pkg as any} />
+                  <Link key={pkg.id} href={`/packages/${(pkg as any).slug}`} className="block">
+                    <PackageCard pkg={pkg as any} />
+                  </Link>
                 ))}
               </div>
             )}
@@ -144,6 +147,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
                       src={getOptimizedImageUrl(item.imageUrl, 200)}
                       alt={item.caption || "Gallery"}
                       fill
+                      sizes="(max-width: 640px) 50vw, 150px"
                       className="object-cover hover:scale-102 transition-transform"
                     />
                   </div>

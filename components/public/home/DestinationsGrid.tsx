@@ -7,46 +7,8 @@ import { Compass, Sparkles, MoveRight } from "lucide-react";
 import { publicApi } from "@/lib/api";
 import { cn, getOptimizedImageUrl } from "@/lib/utils";
 
-const FALLBACK_DESTINATIONS = [
-  {
-    id: "kedarnath",
-    name: "Kedarnath",
-    slug: "kedarnath",
-    packagesCount: 4,
-    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: "manali",
-    name: "Manali",
-    slug: "manali",
-    packagesCount: 6,
-    image: "https://images.unsplash.com/photo-1626621340025-013b242d2b51?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: "rishikesh",
-    name: "Rishikesh",
-    slug: "rishikesh",
-    packagesCount: 3,
-    image: "https://images.unsplash.com/photo-1598977123418-45f04b616a0e?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: "spiti",
-    name: "Spiti Valley",
-    slug: "spiti",
-    packagesCount: 5,
-    image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: "kasol",
-    name: "Kasol",
-    slug: "kasol",
-    packagesCount: 2,
-    image: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&q=80&w=800",
-  },
-];
-
 export default function DestinationsGrid() {
-  const [destinations, setDestinations] = useState<any[]>(FALLBACK_DESTINATIONS);
+  const [destinations, setDestinations] = useState<any[]>([]);
 
   useEffect(() => {
     publicApi
@@ -57,14 +19,16 @@ export default function DestinationsGrid() {
             id: d.id,
             name: d.name,
             slug: d.slug,
-            packagesCount: d._count?.packages || 0,
-            image: d.coverImage || FALLBACK_DESTINATIONS[0].image,
+            packagesCount: d.packageCount || d._count?.packages || 0,
+            image: d.coverImage || "",
           }));
           setDestinations(mapped);
         }
       })
-      .catch((err) => console.log("Using fallback grid destinations", err));
+      .catch((err) => console.log("Failed to fetch grid destinations", err));
   }, []);
+
+  if (destinations.length === 0) return null;
 
   // Max 6 on desktop, but show all on the destinations page
   const MAX_CARDS = 6;
@@ -114,12 +78,14 @@ export default function DestinationsGrid() {
                 )}
               >
                 {/* Background image */}
-                <Image
-                  src={getOptimizedImageUrl(d.image, 800)}
-                  alt={d.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {d.image && (
+                  <Image
+                    src={getOptimizedImageUrl(d.image, 800)}
+                    alt={d.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
 
                 {/* Dark to transparent overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent group-hover:from-primary/60 transition-colors duration-300" />

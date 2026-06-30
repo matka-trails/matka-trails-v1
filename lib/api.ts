@@ -241,7 +241,7 @@ export const publicApi = {
     if (params?.limit) query.append("limit", String(params.limit));
     const res = await fetch(`${BASE_URL}/api/public/blogs?${query.toString()}`);
     const json = await handleResponse(res);
-    return json.data || [];
+    return json.data?.items || [];
   },
 
   async getBlogBySlug(slug: string): Promise<PublicBlog> {
@@ -482,6 +482,23 @@ export const adminApi = {
       method: "POST",
       headers,
       body: JSON.stringify({ folder }),
+    });
+    return (await handleResponse(res)).data;
+  },
+
+  async getAdmins() {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/accounts`, { headers });
+    const json = await handleResponse(res);
+    return json.data || [];
+  },
+
+  async createAdmin(data: any) {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/accounts`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(data),
     });
     return (await handleResponse(res)).data;
   },

@@ -25,6 +25,7 @@ import {
 } from "recharts";
 import { cn, formatPrice } from "@/lib/utils";
 import Link from "next/link";
+import AdminAccountsPanel from "./AdminAccountsPanel";
 
 const COLORS = ["#ff6600", "#111111", "#999999"];
 
@@ -276,6 +277,10 @@ export default function DashboardConsole() {
           </table>
         </div>
       </div>
+
+
+      {/* Row 4: Admin Accounts Management */}
+      <AdminAccountsPanel />
 
     </div>
   );

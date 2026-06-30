@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { Star, MapPin, Compass, ArrowRight } from "lucide-react";
 import { PublicPackage } from "@/lib/api";
@@ -24,12 +23,19 @@ export default function PackageCard({ pkg, className }: PackageCardProps) {
     >
       {/* Cover Image & Badges */}
       <div className="h-[240px] relative overflow-hidden bg-gray-bg shrink-0">
-        <Image
-          src={getOptimizedImageUrl(pkg.coverImage || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800", 600)}
-          alt={pkg.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {pkg.coverImage ? (
+          <Image
+            src={getOptimizedImageUrl(pkg.coverImage, 600)}
+            alt={pkg.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full bg-neutral-900 flex items-center justify-center">
+            <Compass className="w-10 h-10 text-white/20" />
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         
         {/* Category / Group Type Badge */}
@@ -102,14 +108,11 @@ export default function PackageCard({ pkg, className }: PackageCardProps) {
             ))}
           </div>
 
-          {/* Details CTA Link */}
-          <Link
-            href={`/packages/${pkg.slug}`}
-            className="flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-primary hover:text-primary-dark transition-colors"
-          >
+          {/* Details CTA — no Link here to prevent nested <a> when card is wrapped in a link */}
+          <span className="flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-primary group-hover:text-primary-dark transition-colors">
             <span>Details</span>
             <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          </span>
         </div>
       </div>
     </div>

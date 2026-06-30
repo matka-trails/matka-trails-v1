@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email and password are required");
         }
 
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
         try {
           const res = await fetch(`${backendUrl}/api/auth/login`, {

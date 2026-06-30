@@ -32,18 +32,8 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
       {/* Banner */}
-      <div className="relative w-full h-[240px] bg-black overflow-hidden flex items-center">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&q=80&w=1200"
-            alt="Camping in Kasol"
-            fill
-            className="object-cover opacity-45"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-        </div>
+      <div className="relative w-full h-[240px] bg-gradient-to-r from-neutral-950 via-neutral-900 to-neutral-950 overflow-hidden flex items-center border-b border-white/5">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
 
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <div className="space-y-2 text-white">
