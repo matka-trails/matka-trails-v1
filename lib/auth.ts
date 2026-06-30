@@ -1,7 +1,5 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { prisma } from "./prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,29 +14,38 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email and password are required");
         }
 
-        const admin = await prisma.admin.findUnique({
-          where: { email: credentials.email.toLowerCase().trim() },
-        });
+        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-        if (!admin) {
-          throw new Error("Invalid email or password");
+        try {
+          const res = await fetch(`${backendUrl}/api/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: credentials.email.toLowerCase().trim(),
+              password: credentials.password,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok || !data.success) {
+            throw new Error(data.error?.message || "Invalid email or password");
+          }
+
+          // Return user object along with the token
+          return {
+            id: data.data.admin.id,
+            name: data.data.admin.name,
+            email: data.data.admin.email,
+            role: data.data.admin.role,
+            token: data.data.token, // Store the JWT token issued by Express
+          };
+        } catch (error: any) {
+          console.error("[NextAuth Auth Error]", error);
+          throw new Error(error.message || "Failed to connect to authentication server");
         }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          admin.passwordHash
-        );
-
-        if (!isPasswordValid) {
-          throw new Error("Invalid email or password");
-        }
-
-        return {
-          id: admin.id,
-          name: admin.name,
-          email: admin.email,
-          role: admin.role,
-        };
       },
     }),
   ],
@@ -53,6 +60,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.accessToken = (user as any).token; // Store token on JWT token
       }
       return token;
     },
@@ -61,6 +69,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        (session as any).accessToken = token.accessToken; // Expose token to frontend session
       }
       return session;
     },
@@ -73,6 +82,5 @@ export const authOptions: NextAuthOptions = {
 
   secret: process.env.NEXTAUTH_SECRET,
 
-  // Required for Vercel when NEXTAUTH_URL is not set — allows any trusted host
   ...(process.env.VERCEL_URL ? { trustHost: true } : {}),
 };

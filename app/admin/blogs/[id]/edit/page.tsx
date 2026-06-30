@@ -1,37 +1,40 @@
-import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { notFound, useParams } from "next/navigation";
+import { adminApi } from "@/lib/api";
 import BlogForm from "@/components/admin/blogs/BlogForm";
 import QueryProvider from "@/components/shared/QueryProvider";
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+function EditBlogContent() {
+  const params = useParams();
+  const id = params?.id as string;
 
-export const metadata = {
-  title: "Edit Article — Matka Trails",
-};
-
-async function getBlogData(id: string) {
-  const blog = await prisma.blog.findUnique({
-    where: { id, deletedAt: null },
+  const { data: blog, isLoading, error } = useQuery({
+    queryKey: ["admin-blog", id],
+    queryFn: () => adminApi.getBlogById(id),
+    enabled: !!id,
   });
-  return blog;
-}
 
-export default async function EditBlogPage({ params }: PageProps) {
-  const { id } = await params;
-  const blog = await getBlogData(id);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <span className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
-  if (!blog) {
+  if (error || !blog) {
     notFound();
   }
 
-  // Convert dates and other complex objects into plain JSON for Next.js Client Components hydration safety
-  const serializedBlog = JSON.parse(JSON.stringify(blog));
+  return <BlogForm initialData={blog} />;
+}
 
+export default function EditBlogPage() {
   return (
     <QueryProvider>
-      <BlogForm initialData={serializedBlog} />
+      <EditBlogContent />
     </QueryProvider>
   );
 }

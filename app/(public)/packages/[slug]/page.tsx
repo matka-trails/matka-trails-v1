@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl, formatPrice } from "@/lib/utils";
 import { Compass, Star, MapPin, Sparkles, AlertCircle, Share2 } from "lucide-react";
 import ItineraryAccordion from "@/components/public/packages/ItineraryAccordion";
@@ -19,46 +19,30 @@ interface PageProps {
 // ─── 1. SEO Dynamic Metadata ─────────────────────────
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const pkg = await prisma.package.findUnique({
-    where: { slug, deletedAt: null },
-  });
-
-  if (!pkg) return { title: "Package Not Found" };
-
-  return {
-    title: `${pkg.title} (${pkg.durationDays}D/${pkg.durationNights}N) — Matka Trails`,
-    description: pkg.summary || `Join our group trek to ${pkg.title}. Book your slot, meet your dynamic cohort, and explore with our Captain.`,
-    openGraph: {
-      title: `${pkg.title} Trek — Matka Trails`,
-      description: pkg.summary || `Trek to ${pkg.title}.`,
-      images: pkg.coverImage ? [pkg.coverImage] : [],
-    },
-  };
+  try {
+    const pkg = await publicApi.getPackageBySlug(slug);
+    return {
+      title: `${pkg.title} (${pkg.durationDays}D/${pkg.durationNights}N) — Matka Trails`,
+      description: pkg.summary || `Join our group trek to ${pkg.title}. Book your slot, meet your dynamic cohort, and explore with our Captain.`,
+      openGraph: {
+        title: `${pkg.title} Trek — Matka Trails`,
+        description: pkg.summary || `Trek to ${pkg.title}.`,
+        images: pkg.coverImage ? [pkg.coverImage] : [],
+      },
+    };
+  } catch {
+    return { title: "Package Not Found" };
+  }
 }
 
 // ─── 2. Fetch Helper ──────────────────────────────────
 async function getPackageData(slug: string) {
-  const pkg = await prisma.package.findUnique({
-    where: { slug, deletedAt: null },
-    include: {
-      destination: true,
-      itinerary: {
-        orderBy: { dayNumber: "asc" },
-      },
-      reviews: {
-        where: { isApproved: true },
-        orderBy: { createdAt: "desc" },
-      },
-      testimonials: {
-        orderBy: { sortOrder: "asc" },
-      },
-      faqs: {
-        orderBy: { sortOrder: "asc" },
-      },
-    },
-  });
-
-  return pkg;
+  try {
+    return await publicApi.getPackageBySlug(slug);
+  } catch (error) {
+    console.error("Failed to fetch package:", error);
+    return null;
+  }
 }
 
 // ─── 3. Detail Page Component ────────────────────────
@@ -74,16 +58,6 @@ export default async function PackageDetailPage({ params }: PageProps) {
   const originalPrice = pkg.priceOriginal;
   const discountedPrice = pkg.priceDiscounted;
   const priceToShow = discountedPrice || originalPrice;
-
-  // Convert schema reviews & itinerary into publicAPI compatible types
-  const mappedPackage = {
-    ...pkg,
-    destination: pkg.destination,
-    itinerary: pkg.itinerary,
-    reviews: pkg.reviews,
-    testimonials: pkg.testimonials,
-    faqs: pkg.faqs,
-  };
 
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
@@ -127,7 +101,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
               <div className="flex items-center gap-1">
                 <Star className="w-4 h-4 fill-primary text-primary shrink-0" />
                 <span>4.8 Rating</span>
-                <span className="text-white/40">({pkg.reviews.length} approved reviews)</span>
+                <span className="text-white/40">({pkg.reviews?.length || 0} approved reviews)</span>
               </div>
             </div>
           </div>
@@ -161,7 +135,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
               <span className="w-1.5 h-6 bg-primary rounded-full" />
               <span>Day-by-day Itinerary Trail</span>
             </h3>
-            <ItineraryAccordion days={pkg.itinerary} />
+            <ItineraryAccordion days={pkg.itinerary || []} />
           </div>
 
           {/* Inclusions & Exclusions */}
@@ -171,8 +145,8 @@ export default async function PackageDetailPage({ params }: PageProps) {
               <span>Inclusions & Policies</span>
             </h3>
             <InclusionsExclusions
-              inclusions={pkg.inclusions}
-              exclusions={pkg.exclusions}
+              inclusions={pkg.inclusions || []}
+              exclusions={pkg.exclusions || []}
             />
           </div>
 
@@ -206,7 +180,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
               <span className="w-1.5 h-6 bg-primary rounded-full" />
               <span>Group Traveler Reviews</span>
             </h3>
-            {pkg.reviews.length > 0 ? (
+            {pkg.reviews && pkg.reviews.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {pkg.reviews.map((rev) => (
                   <ReviewCard key={rev.id} review={rev} />
@@ -222,12 +196,12 @@ export default async function PackageDetailPage({ params }: PageProps) {
 
         {/* Right Column: Sticky booking pane (Desktop) */}
         <div>
-          <BookingPanel pkg={mappedPackage} />
+          <BookingPanel pkg={pkg as any} />
         </div>
       </div>
 
       {/* Mobile Sticky bottom CTA bar */}
-      <FloatingBookCTA pkg={mappedPackage} />
+      <FloatingBookCTA pkg={pkg as any} />
     </div>
   );
 }

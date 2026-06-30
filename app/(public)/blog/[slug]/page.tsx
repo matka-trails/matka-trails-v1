@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl, formatDate } from "@/lib/utils";
 import { Compass, Calendar, Sparkles, HelpCircle } from "lucide-react";
 import BlogContentRenderer from "@/components/public/blog/BlogContentRenderer";
@@ -13,32 +13,36 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const blog = await prisma.blog.findUnique({
-    where: { slug, deletedAt: null },
-  });
-
-  if (!blog) return { title: "Article Not Found" };
-
-  return {
-    title: `${blog.title} — Matka Trails Blog`,
-    description: blog.metaDescription || `Read ${blog.title} on the Matka Trails Travel Blog. Discover tips, guides, and stories from our captains.`,
-  };
+  try {
+    const blog = await publicApi.getBlogBySlug(slug);
+    return {
+      title: `${blog.title} — Matka Trails Blog`,
+      description: blog.metaDescription || `Read ${blog.title} on the Matka Trails Travel Blog. Discover tips, guides, and stories from our captains.`,
+    };
+  } catch {
+    return { title: "Article Not Found" };
+  }
 }
 
 async function getBlogData(slug: string) {
-  const blog = await prisma.blog.findUnique({
-    where: { slug, deletedAt: null },
-    include: {
-      author: {
-        select: { name: true, avatar: true },
-      },
-      faqs: {
-        orderBy: { sortOrder: "asc" },
-      },
-    },
-  });
+  try {
+    return await publicApi.getBlogBySlug(slug);
+  } catch (error) {
+    console.error("Failed to fetch blog:", error);
+    return null;
+  }
+}
 
-  return blog;
+async function getRelatedPosts(currentBlogId: string) {
+  try {
+    const allBlogs = await publicApi.getBlogs();
+    return allBlogs
+      .filter((post) => post.id !== currentBlogId)
+      .slice(0, 3);
+  } catch (error) {
+    console.error("Failed to fetch related posts:", error);
+    return [];
+  }
 }
 
 export default async function BlogDetailPage({ params }: PageProps) {
@@ -49,16 +53,7 @@ export default async function BlogDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch 3 related posts for the bottom grid
-  const relatedPosts = await prisma.blog.findMany({
-    where: {
-      status: "PUBLISHED",
-      deletedAt: null,
-      NOT: { id: blog.id },
-    },
-    take: 3,
-    orderBy: { createdAt: "desc" },
-  });
+  const relatedPosts = await getRelatedPosts(blog.id);
 
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">
@@ -81,7 +76,7 @@ export default async function BlogDetailPage({ params }: PageProps) {
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <div className="space-y-3 text-white max-w-4xl">
             <div className="flex flex-wrap items-center gap-2">
-              {blog.tags.map((tag) => (
+              {(blog.tags || []).map((tag) => (
                 <span
                   key={tag}
                   className="bg-primary text-white text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded"

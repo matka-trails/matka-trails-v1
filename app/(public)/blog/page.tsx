@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl, formatDate } from "@/lib/utils";
 import { Compass, Calendar, BookOpen, MoveRight } from "lucide-react";
 
@@ -10,35 +10,24 @@ export const metadata: Metadata = {
   description: "Read trekking guides, altitude tips, river rafting safety checklists, and stories from solo travelers on our weekend trails.",
 };
 
-async function getBlogs(tag?: string) {
-  return await prisma.blog.findMany({
-    where: {
-      status: "PUBLISHED",
-      deletedAt: null,
-      ...(tag ? { tags: { has: tag } } : {}),
-    },
-    include: {
-      author: {
-        select: { name: true, avatar: true },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+async function getBlogsData(tag?: string) {
+  try {
+    const allBlogs = await publicApi.getBlogs();
+    const uniqueTags = Array.from(new Set(allBlogs.flatMap((b) => b.tags || [])));
+    const blogs = tag ? allBlogs.filter((b) => b.tags.includes(tag)) : allBlogs;
+    return { blogs, uniqueTags };
+  } catch (error) {
+    console.error("Failed to fetch blogs:", error);
+    return { blogs: [], uniqueTags: [] };
+  }
 }
 
 export default async function BlogPage({ searchParams }: { searchParams: Promise<{ tag?: string }> }) {
   const { tag } = await searchParams;
-  const blogs = await getBlogs(tag);
+  const { blogs, uniqueTags } = await getBlogsData(tag);
 
   const featuredPost = blogs[0];
   const regularPosts = blogs.slice(1);
-
-  // Extract all unique tags from published blogs
-  const allBlogsForTags = await prisma.blog.findMany({
-    where: { status: "PUBLISHED", deletedAt: null },
-    select: { tags: true },
-  });
-  const uniqueTags = Array.from(new Set(allBlogsForTags.flatMap((b) => b.tags || [])));
 
   return (
     <div className="w-full bg-gray-bg min-h-screen pb-24">

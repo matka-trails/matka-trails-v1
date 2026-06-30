@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send, CheckCircle, Loader2 } from "lucide-react";
+import { publicApi } from "@/lib/api";
 
 export default function ContactSection() {
   const [form, setForm] = useState({
@@ -24,19 +25,19 @@ export default function ContactSection() {
     setStatus("loading");
 
     try {
-      const res = await fetch("/api/public/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+      await publicApi.submitLead({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || "N/A",
+        city: form.destination || undefined,
+        message: form.message,
+        source: "WEBSITE_FORM",
       });
 
-      if (res.ok) {
-        setStatus("success");
-        setForm({ name: "", email: "", phone: "", destination: "", message: "" });
-      } else {
-        setStatus("error");
-      }
-    } catch {
+      setStatus("success");
+      setForm({ name: "", email: "", phone: "", destination: "", message: "" });
+    } catch (err) {
+      console.error(err);
       setStatus("error");
     }
 

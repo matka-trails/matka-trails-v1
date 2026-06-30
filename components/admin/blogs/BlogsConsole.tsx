@@ -25,10 +25,7 @@ export default function BlogsConsole() {
   // Fetch blogs
   const { data: blogs = [], isLoading, error } = useQuery({
     queryKey: ["admin-blogs"],
-    queryFn: () => adminApi.getDestinations().then(() => {
-      // Fetch admin blogs via API
-      return fetch("/api/admin/blogs").then((r) => r.json()).then((res) => res.data?.items || []);
-    }),
+    queryFn: () => adminApi.getBlogs(),
   });
 
   // Mutate delete blog

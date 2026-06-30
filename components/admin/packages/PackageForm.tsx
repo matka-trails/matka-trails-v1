@@ -200,25 +200,11 @@ export default function PackageForm({ initialData }: PackageFormProps) {
         durationNights: Number(data.durationNights),
       };
 
-      const url = initialData
-        ? `/api/admin/packages/${initialData.id}`
-        : "/api/admin/packages";
-      const method = initialData ? "PATCH" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      let json: any = {};
-      try {
-        const text = await res.text();
-        if (text) json = JSON.parse(text);
-      } catch {
-        // non-JSON or empty body — handled below
+      if (initialData) {
+        await adminApi.updatePackage(initialData.id, payload);
+      } else {
+        await adminApi.createPackage(payload);
       }
-      if (!res.ok) throw new Error(json.error?.message || json.message || `Server error ${res.status}`);
 
       toast.success(initialData ? "Package updated!" : "New package created!");
       router.push("/admin/packages");

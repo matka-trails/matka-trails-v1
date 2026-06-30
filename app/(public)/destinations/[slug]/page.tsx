@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl } from "@/lib/utils";
 import { Compass, Sparkles, MapPin } from "lucide-react";
 import PackageCard from "@/components/public/packages/PackageCard";
@@ -13,35 +13,24 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const destination = await prisma.destination.findUnique({
-    where: { slug, deletedAt: null },
-  });
-
-  if (!destination) return { title: "Destination Not Found" };
-
-  return {
-    title: `${destination.name} Trips & Weekend Treks — Matka Trails`,
-    description: destination.description || `Browse group trekking packages for ${destination.name}. Lock your slots and join a verified dynamic travel group.`,
-  };
+  try {
+    const destination = await publicApi.getDestinationBySlug(slug);
+    return {
+      title: `${destination.name} Trips & Weekend Treks — Matka Trails`,
+      description: destination.description || `Browse group trekking packages for ${destination.name}. Lock your slots and join a verified dynamic travel group.`,
+    };
+  } catch {
+    return { title: "Destination Not Found" };
+  }
 }
 
 async function getDestinationData(slug: string) {
-  const destination = await prisma.destination.findUnique({
-    where: { slug, deletedAt: null },
-    include: {
-      packages: {
-        where: { deletedAt: null, status: "PUBLISHED" },
-        include: {
-          destination: true,
-        },
-      },
-      gallery: {
-        orderBy: { sortOrder: "asc" },
-      },
-    },
-  });
-
-  return destination;
+  try {
+    return await publicApi.getDestinationBySlug(slug);
+  } catch (error) {
+    console.error("Failed to fetch destination:", error);
+    return null;
+  }
 }
 
 export default async function DestinationDetailPage({ params }: PageProps) {
@@ -53,7 +42,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
   }
 
   // Convert schema packages to publicAPI format compatibility
-  const mappedPackages = destination.packages.map((pkg) => ({
+  const mappedPackages = (destination.packages || []).map((pkg) => ({
     ...pkg,
     destination: destination,
     itinerary: [],
@@ -91,7 +80,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
             </h1>
             <div className="flex items-center gap-1 text-xs font-semibold text-white/70">
               <MapPin className="w-4 h-4 text-primary shrink-0" />
-              <span>{destination.packages.length} Published Trails</span>
+              <span>{mappedPackages.length} Published Trails</span>
             </div>
           </div>
         </div>
@@ -127,7 +116,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {mappedPackages.map((pkg) => (
-                  <PackageCard key={pkg.id} pkg={pkg} />
+                  <PackageCard key={pkg.id} pkg={pkg as any} />
                 ))}
               </div>
             )}
@@ -142,11 +131,11 @@ export default async function DestinationDetailPage({ params }: PageProps) {
               <span>Territory Gallery</span>
             </h4>
             
-            {destination.gallery.length === 0 ? (
+            {!destination.gallery || destination.gallery.length === 0 ? (
               <p className="text-xs text-gray-light font-medium italic">No gallery photos added yet.</p>
             ) : (
               <div className="grid grid-cols-2 gap-2.5">
-                {destination.gallery.map((item) => (
+                {destination.gallery.map((item: any) => (
                   <div
                     key={item.id}
                     className="relative h-[80px] rounded-lg overflow-hidden border border-gray-border bg-gray-bg"

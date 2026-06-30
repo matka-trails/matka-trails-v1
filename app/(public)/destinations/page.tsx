@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl } from "@/lib/utils";
 import { Compass, MoveRight, Sparkles } from "lucide-react";
 
@@ -11,15 +11,12 @@ export const metadata: Metadata = {
 };
 
 async function getDestinations() {
-  return await prisma.destination.findMany({
-    where: { deletedAt: null },
-    include: {
-      _count: {
-        select: { packages: true },
-      },
-    },
-    orderBy: { sortOrder: "asc" },
-  });
+  try {
+    return await publicApi.getDestinations();
+  } catch (error) {
+    console.error("Failed to fetch destinations:", error);
+    return [];
+  }
 }
 
 export default async function DestinationsPage() {
@@ -73,42 +70,45 @@ export default async function DestinationsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {destinations.map((d) => (
-              <Link
-                key={d.id}
-                href={`/destinations/${d.slug}`}
-                className="group relative rounded-2xl overflow-hidden border border-gray-border shadow-card bg-gray-bg h-[240px] md:h-[280px]"
-              >
-                {/* Background image */}
-                {d.coverImage && (
-                  <Image
-                    src={getOptimizedImageUrl(d.coverImage, 800)}
-                    alt={d.name}
-                    fill
-                    className="object-cover group-hover:scale-103 transition-transform duration-500"
-                  />
-                )}
+            {destinations.map((d) => {
+              const packageCount = d._count?.packages ?? d.packageCount ?? 0;
+              return (
+                <Link
+                  key={d.id}
+                  href={`/destinations/${d.slug}`}
+                  className="group relative rounded-2xl overflow-hidden border border-gray-border shadow-card bg-gray-bg h-[240px] md:h-[280px]"
+                >
+                  {/* Background image */}
+                  {d.coverImage && (
+                    <Image
+                      src={getOptimizedImageUrl(d.coverImage, 800)}
+                      alt={d.name}
+                      fill
+                      className="object-cover group-hover:scale-103 transition-transform duration-500"
+                    />
+                  )}
 
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent group-hover:from-primary/60 transition-colors duration-300" />
+                  {/* Dark overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent group-hover:from-primary/60 transition-colors duration-300" />
 
-                {/* Info Text overlays */}
-                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between z-10 text-white">
-                  <div>
-                    <h3 className="font-sans font-extrabold text-xl uppercase leading-none truncate max-w-[200px]">
-                      {d.name}
-                    </h3>
-                    <span className="text-[10px] text-white/60 font-bold uppercase tracking-wider block mt-1">
-                      {d._count.packages} {d._count.packages === 1 ? "trail" : "trails"} available
-                    </span>
+                  {/* Info Text overlays */}
+                  <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between z-10 text-white">
+                    <div>
+                      <h3 className="font-sans font-extrabold text-xl uppercase leading-none truncate max-w-[200px]">
+                        {d.name}
+                      </h3>
+                      <span className="text-[10px] text-white/60 font-bold uppercase tracking-wider block mt-1">
+                        {packageCount} {packageCount === 1 ? "trail" : "trails"} available
+                      </span>
+                    </div>
+
+                    <div className="w-9 h-9 rounded-full bg-white/10 group-hover:bg-white flex items-center justify-center text-white group-hover:text-primary transition-all">
+                      <MoveRight className="w-4.5 h-4.5" />
+                    </div>
                   </div>
-
-                  <div className="w-9 h-9 rounded-full bg-white/10 group-hover:bg-white flex items-center justify-center text-white group-hover:text-primary transition-all">
-                    <MoveRight className="w-4.5 h-4.5" />
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
