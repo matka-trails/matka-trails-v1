@@ -1,5 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,900&display=swap');
 @import "tailwindcss";
+
+.font-reminder {
+  font-family: var(--font-reminder), 'Comic Sans MS', cursive;
+}
+
+.marker-zigzag {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.marker-zigzag::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;
+  height: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M0,4 Q10,1 25,6 T50,3 T75,6 T100,2' fill='none' stroke='%23ff6600' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  z-index: -1;
+}
 
 :root {
   /* Brand colors */
@@ -23,7 +45,7 @@
   --foreground: #111111;
 
   /* Typography */
-  --font-main: 'Montserrat', system-ui, sans-serif;
+  --font-main: var(--font-montserrat), sans-serif;
 
   /* Radius */
   --radius-sm: 8px;
@@ -57,6 +79,7 @@
   --color-cream-bg: var(--cream-bg);
   --color-white: var(--white);
   --font-sans: var(--font-main);
+  --font-reminder: var(--font-reminder), 'Comic Sans MS', cursive;
   
   --shadow-card: var(--shadow-card);
   --shadow-hover: var(--shadow-hover);
@@ -85,19 +108,26 @@ body {
 }
 
 /* Custom Scrollbar */
+html, body {
+  scrollbar-color: var(--primary) transparent;
+  scrollbar-width: thin;
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--white);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #ddd;
-  border-radius: var(--radius-pill);
+  background-color: var(--primary);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background-color: var(--primary-dark);
 }
 
 /* Lenis smooth scrolling styles */

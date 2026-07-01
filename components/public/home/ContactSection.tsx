@@ -60,9 +60,8 @@ export default function ContactSection() {
               <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
                 GET IN TOUCH
               </span>
-              <h2 className="font-sans font-black text-3xl md:text-4xl lg:text-5xl leading-none tracking-tight">
-                Plan your next <br />
-                <span className="text-primary italic">adventure.</span>
+              <h2 className="font-reminder text-4xl md:text-5xl text-white leading-tight tracking-wide capitalize pb-2">
+                Plan Your Next <span className="marker-zigzag text-primary">Adventure</span>
               </h2>
               <p className="text-sm text-white/50 leading-relaxed font-semibold max-w-md">
                 Have a question about our packages? Want to book a custom group trip? 

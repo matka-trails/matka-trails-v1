@@ -71,8 +71,8 @@ export default function VideoTestimonialsSection() {
             <MessageSquare className="w-3.5 h-3.5" />
             <span>Wanderers speak</span>
           </div>
-          <h2 className="font-sans font-black italic text-3xl md:text-5xl text-black uppercase tracking-tight leading-none mt-2">
-            Real People, Real Stories
+          <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize mt-2">
+            Real People, <span className="marker-zigzag text-primary">Real Stories</span>
           </h2>
           <p className="font-sans text-xs md:text-sm font-bold text-gray-mid uppercase tracking-widest">
             Client Testimonials & Trip Reviews

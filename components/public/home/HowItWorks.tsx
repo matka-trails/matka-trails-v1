@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Compass, Users, Map, Sparkles } from "lucide-react";
+import { Sparkles, Map, Users, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function HowItWorks() {
-  const pathRef = useRef<SVGPathElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
@@ -16,7 +16,7 @@ export default function HowItWorks() {
           setInView(true);
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.15 }
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
@@ -24,106 +24,94 @@ export default function HowItWorks() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (!inView) return;
-    const path = pathRef.current;
-    if (!path) return;
-
-    const length = path.getTotalLength();
-    path.style.strokeDasharray = `${length}`;
-    path.style.strokeDashoffset = `${length}`;
-    
-    // Animate dash offset to 0
-    path.style.transition = "stroke-dashoffset 1.5s ease-in-out";
-    path.style.strokeDashoffset = "0";
-  }, [inView]);
-
   const steps = [
     {
       num: "01",
-      icon: <Map className="w-5 h-5 text-primary" />,
-      title: "Pick Your Trail",
-      desc: "Browse our hand-crafted weekend routes. Filter by duration, budget, or target peaks.",
+      title: "Book as a Solo Traveller",
+      desc: "Don't wait for friends who keep cancelling. Join a community of like-minded adventurers ready to explore.",
     },
     {
       num: "02",
-      icon: <Users className="w-5 h-5 text-primary" />,
-      title: "Get Grouped",
-      desc: "Travel solo but never alone. We match you into a dynamic cohort of like-minded explorers.",
+      title: "Expert Guided Integration",
+      desc: "Our vibe-check officers ensure everyone feels at home from day one with curated icebreakers.",
     },
     {
       num: "03",
-      icon: <Compass className="w-5 h-5 text-primary" />,
-      title: "Show Up & Explore",
-      desc: "Your expert Group Captain handles all routes, logs, and stays. You just hike and bond.",
+      title: "Lifetime Tribe Connections",
+      desc: "Return with more than memories. You'll leave with a global family for your next epic journey.",
     },
   ];
 
   return (
-    <section ref={sectionRef} className="relative w-full py-20 px-6 lg:px-12 bg-white">
-      <div className="max-w-7xl mx-auto space-y-12 relative">
+    <section 
+      ref={sectionRef} 
+      className="relative w-full py-10 md:py-16 px-6 lg:px-12 bg-white overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center relative z-10">
         
-        {/* Header */}
-        <div className="text-center space-y-3">
-          <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center justify-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>HOW IT WORKS</span>
-          </span>
-          <h2 className="font-sans font-black text-3xl md:text-4xl lg:text-5xl text-black leading-none tracking-tight">
-            Solo In. <span className="text-primary italic">Group Out.</span>
-          </h2>
-          <p className="text-sm text-gray-mid leading-relaxed font-semibold max-w-md mx-auto">
-            Our micro-group format guarantees a structured, safe, and highly memorable weekend getaway.
-          </p>
-        </div>
+        {/* ── LEFT COLUMN: High-quality optimized image showcase ── */}
+        <div className="relative flex items-center justify-center lg:justify-start">
+          {/* Circular bubble background element */}
+          <div className="w-[260px] h-[260px] rounded-full bg-primary-light/40 absolute -left-4 -top-8 z-0 pointer-events-none" />
 
-        {/* SVG Connecting Path (Desktop Only) */}
-        <div className="hidden lg:block absolute inset-0 top-16 pointer-events-none z-0">
-          <svg className="w-full h-full" viewBox="0 0 1200 400" fill="none">
-            <path
-              ref={pathRef}
-              d="M 220 200 C 400 100, 500 300, 600 200 C 700 100, 800 300, 980 200"
-              stroke="#ff6600"
-              strokeWidth="2"
-              strokeDasharray="8 8"
-              className="opacity-70"
+          {/* Styled Image Container */}
+          <div 
+            className={cn(
+              "relative w-full max-w-[510px] aspect-[4/3] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] z-10 transition-all duration-700 ease-out transform rounded-[2rem] overflow-hidden",
+              inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-95"
+            )}
+          >
+            <Image
+              src="https://res.cloudinary.com/afol8skx/image/upload/f_auto,q_auto/v1782835284/HowItWorks_zygnfo.png"
+              alt="How It Works"
+              fill
+              sizes="(max-width: 768px) 100vw, 40vw"
+              className="object-cover"
+              priority
             />
-          </svg>
+          </div>
         </div>
 
-        {/* Steps Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
-          {steps.map((step, idx) => (
-            <div
-              key={idx}
-              className={cn(
-                "bg-white border border-gray-border hover:border-primary/30 rounded-2xl p-6 space-y-4 hover:shadow-card transition-all duration-300 transform",
-                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-              )}
-              style={{ transition: `all 0.5s ease-out ${idx * 0.2}s` }}
-            >
-              {/* Top Row: Icon & Num */}
-              <div className="flex items-center justify-between">
-                <div className="w-11 h-11 bg-primary-light rounded-xl flex items-center justify-center border border-primary/20">
-                  {step.icon}
-                </div>
-                <span className="font-sans font-black italic text-xl text-primary-light bg-primary/10 border border-primary/20 px-3 py-1 rounded-lg">
+        {/* ── RIGHT COLUMN: Title with Highlight + Ghost Pointers ── */}
+        <div className="space-y-8 lg:space-y-10 text-left">
+          
+          {/* Header */}
+          <div className="pb-2">
+            <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize">
+              Solo In, <span className="marker-zigzag text-primary">Group Out</span>
+            </h2>
+          </div>
+
+          {/* Staggered Pointers List */}
+          <div className="space-y-6 lg:space-y-8">
+            {steps.map((step, idx) => (
+              <div
+                key={idx}
+                className={cn(
+                  "flex items-start gap-4 lg:gap-6 transition-all duration-500 transform",
+                  inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
+                )}
+                style={{ transitionDelay: `${idx * 0.15}s` }}
+              >
+                {/* Ghost Number Indicator */}
+                <span className="font-sans font-black text-5xl lg:text-6xl text-primary/10 select-none tracking-tighter leading-none pt-0.5">
                   {step.num}
                 </span>
-              </div>
 
-              {/* Text Info */}
-              <div className="space-y-1">
-                <h3 className="font-sans font-bold text-base text-black">
-                  {step.title}
-                </h3>
-                <p className="text-xs text-gray-mid leading-relaxed font-semibold">
-                  {step.desc}
-                </p>
+                {/* Text Content */}
+                <div className="space-y-1">
+                  <h3 className="font-sans font-extrabold text-base lg:text-lg text-black leading-tight">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs text-gray-mid leading-relaxed font-semibold max-w-md">
+                    {step.desc}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
       </div>
     </section>
   );

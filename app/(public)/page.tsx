@@ -1,9 +1,9 @@
 import HeroSection from "@/components/public/home/HeroSection";
 import TrustStrip from "@/components/public/home/TrustStrip";
 import TickerSection from "@/components/public/home/TickerSection";
-import PackagesSection from "@/components/public/home/PackagesSection";
+import PackagesShowcase from "@/components/public/home/PackagesShowcase";
 import HowItWorks from "@/components/public/home/HowItWorks";
-import DestinationsGrid from "@/components/public/home/DestinationsGrid";
+import DestinationsShowcase from "@/components/public/home/DestinationsShowcase";
 import GalleryFramesSection from "@/components/public/home/GalleryFramesSection";
 import WhyMatkaTrails from "@/components/public/home/WhyMatkaTrails";
 import VideoTestimonialsSection from "@/components/public/home/VideoTestimonialsSection";
@@ -20,31 +20,31 @@ export default function Home() {
         <HeroSection />
 
         {/* 2. Trust Credentials Strip */}
-        <TrustStrip />
+        {/* <TrustStrip /> */}
 
         {/* 3. Bidirectional CSS Ticker */}
-        <TickerSection />
+        {/* <TickerSection /> */}
 
-        {/* 4. Featured Packages scroll lane */}
-        <PackagesSection />
+        {/* 4. Featured Packages — zig-zag 3-card carousel */}
+        <PackagesShowcase />
 
         {/* 5. SVG connecting How It Works */}
         <HowItWorks />
 
-        {/* 6. Pinterest-style destinations masonry */}
-        <DestinationsGrid />
-
-        {/* 6.5 Journey in Frames Panorama Gallery */}
-        <GalleryFramesSection />
+        {/* 6. Staggered "hanging cards" destinations */}
+        <DestinationsShowcase />
 
         {/* 7. Pitch Value Propositions */}
         <WhyMatkaTrails />
+
+        {/* 7.2 Journey in Frames Panorama Gallery */}
+        <GalleryFramesSection />
 
         {/* 7.5 Real People Real Stories Video Testimonials */}
         <VideoTestimonialsSection />
 
         {/* 8. Stats count-ups */}
-        <StatsBar />
+        {/* <StatsBar /> */}
 
         {/* 9. Blogs Grid & call-to-action */}
         <BlogPreview />

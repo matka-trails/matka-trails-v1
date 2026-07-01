@@ -59,9 +59,9 @@ export default function BlogPreview() {
             <Sparkles className="w-3.5 h-3.5" />
             <span>JOIN THE DEPARTURE LIST</span>
           </span>
-          <h2 className="font-sans font-black italic text-4xl md:text-6xl text-white uppercase leading-none tracking-tight">
-            Your next weekend <br />
-            trail starts <span className="text-primary italic">here.</span>
+          <h2 className="font-reminder text-4xl md:text-6xl text-white leading-tight tracking-wide capitalize pb-2">
+            Your Next Weekend <br />
+            Trail Starts <span className="marker-zigzag text-primary">Here</span>
           </h2>
           <p className="text-sm md:text-base text-white/50 max-w-lg mx-auto leading-relaxed font-semibold">
             Reserve slots early. Groups are finalized on a rolling basis depending on age metrics, adventure quotients, and preferences.
@@ -98,9 +98,8 @@ export default function BlogPreview() {
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>FROM THE TRAILS</span>
               </span>
-              <h2 className="font-sans font-black text-3xl md:text-4xl lg:text-5xl text-black leading-none tracking-tight">
-                Stories and <br />
-                <span className="text-primary italic">travel hacks.</span>
+              <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize pb-2">
+                Stories and <span className="marker-zigzag text-primary">Travel Hacks</span>
               </h2>
             </div>
             <div>
