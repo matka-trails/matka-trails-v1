@@ -1,4 +1,4 @@
-import HeroSection from "@/components/public/home/HeroSection";
+import Hero from "@/components/public/home/Hero";
 import TrustStrip from "@/components/public/home/TrustStrip";
 import TickerSection from "@/components/public/home/TickerSection";
 import PackagesShowcase from "@/components/public/home/PackagesShowcase";
@@ -17,7 +17,7 @@ export default function Home() {
     <QueryProvider>
       <div className="flex flex-col w-full min-h-screen">
         {/* 1. Immersive Hero showcase */}
-        <HeroSection />
+        <Hero />
 
         {/* 2. Trust Credentials Strip */}
         {/* <TrustStrip /> */}

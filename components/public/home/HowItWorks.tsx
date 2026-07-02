@@ -47,10 +47,20 @@ export default function HowItWorks() {
       ref={sectionRef} 
       className="relative w-full py-10 md:py-16 px-6 lg:px-12 bg-white overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center relative z-10">
+      <div className="max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-10 items-center relative z-10">
         
-        {/* ── LEFT COLUMN: High-quality optimized image showcase ── */}
-        <div className="relative flex items-center justify-center lg:justify-start">
+        {/* ── MOBILE HEADER (Centered, visible only on mobile, order-1) ── */}
+        <div className="lg:hidden text-center space-y-3 mb-2 w-full order-1">
+          <h2 className="font-reminder text-4xl text-black leading-none tracking-wide capitalize">
+            Solo In, <span className="marker-zigzag text-primary">Group Out</span>
+          </h2>
+          <p className="text-xs font-bold text-gray-mid max-w-xs mx-auto leading-relaxed">
+            Don&apos;t just sit in front of a screen. Step out and meet your tribe!
+          </p>
+        </div>
+
+        {/* ── IMAGE COLUMN (On mobile: order-3 / bottom. On desktop: lg:order-1 / left) ── */}
+        <div className="relative flex items-center justify-center lg:justify-start order-3 lg:order-1 w-full">
           {/* Circular bubble background element */}
           <div className="w-[260px] h-[260px] rounded-full bg-primary-light/40 absolute -left-4 -top-8 z-0 pointer-events-none" />
 
@@ -72,14 +82,17 @@ export default function HowItWorks() {
           </div>
         </div>
 
-        {/* ── RIGHT COLUMN: Title with Highlight + Ghost Pointers ── */}
-        <div className="space-y-8 lg:space-y-10 text-left">
+        {/* ── CONTENT COLUMN (On mobile: order-2 / middle. On desktop: lg:order-2 / right) ── */}
+        <div className="space-y-8 lg:space-y-10 text-left w-full order-2 lg:order-2">
           
-          {/* Header */}
-          <div className="pb-2">
+          {/* DESKTOP HEADER (Visible only on desktop) */}
+          <div className="hidden lg:block pb-2">
             <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize">
               Solo In, <span className="marker-zigzag text-primary">Group Out</span>
             </h2>
+            <p className="text-sm font-semibold text-gray-mid mt-3 max-w-md">
+              Don&apos;t just sit in front of a screen. Step out and meet your tribe!
+            </p>
           </div>
 
           {/* Staggered Pointers List */}
@@ -94,7 +107,7 @@ export default function HowItWorks() {
                 style={{ transitionDelay: `${idx * 0.15}s` }}
               >
                 {/* Ghost Number Indicator */}
-                <span className="font-sans font-black text-5xl lg:text-6xl text-primary/10 select-none tracking-tighter leading-none pt-0.5">
+                <span className="font-sans font-black text-5xl lg:text-6xl text-primary/10 select-none tracking-tighter leading-none pt-0.5 animate-pulse">
                   {step.num}
                 </span>
 

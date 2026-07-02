@@ -88,7 +88,7 @@ export default function DestinationsShowcase() {
           <div className="space-y-8">
             <div className="text-center pb-2">
               <h2 className="font-reminder text-4xl lg:text-5xl text-black leading-none tracking-wide capitalize">
-                Tour <span className="marker-zigzag text-primary">Destinations</span>
+                Matka <span className="marker-zigzag text-primary">Destinations</span>
               </h2>
               <p className="text-gray-dark max-w-xl mx-auto font-sans text-lg mt-2">
                 We've got something for everyone.   
@@ -139,7 +139,7 @@ export default function DestinationsShowcase() {
             {/* Header */}
             <div className="text-center pb-2">
               <h2 className="font-reminder text-4xl lg:text-5xl text-black leading-none tracking-wide capitalize">
-                Tour <span className="marker-zigzag text-primary">Destinations</span>
+                Matka <span className="marker-zigzag text-primary">Destinations</span>
               </h2>
               <p className="text-gray-dark max-w-xl mx-auto font-sans text-lg mt-2">
                 We've got something for everyone.   
@@ -197,7 +197,7 @@ export default function DestinationsShowcase() {
           {/* Mobile Header */}
           <div className="text-center pb-2">
             <h2 className="font-reminder text-4xl lg:text-5xl text-black leading-none tracking-wide capitalize">
-                Tour <span className="marker-zigzag text-primary">Destinations</span>
+                Matka <span className="marker-zigzag text-primary">Destinations</span>
               </h2>
               <p className="text-gray-dark max-w-xl mx-auto font-sans text-lg mt-2">
                 We've got something for everyone.   

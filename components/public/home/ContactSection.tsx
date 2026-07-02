@@ -45,7 +45,10 @@ export default function ContactSection() {
   };
 
   return (
-    <section className="w-full py-20 px-4 md:px-6 lg:px-12 bg-[#111111] relative overflow-hidden">
+    <section
+      id="contact-section"
+      className="w-full py-20 px-4 md:px-6 lg:px-12 bg-[#111111] relative overflow-hidden"
+    >
       {/* Subtle background accent */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />

@@ -310,6 +310,7 @@ export default function PackagesShowcase() {
 
   return (
     <section
+      id="packages-showcase"
       className="w-full bg-white py-10 md:py-16 overflow-hidden relative bg-no-repeat bg-top"
       style={{
         backgroundImage: `url("https://res.cloudinary.com/afol8skx/image/upload/f_auto,q_auto/v1782819706/tourbg_bhks7i.png")`,
@@ -321,8 +322,8 @@ export default function PackagesShowcase() {
         <div className="lg:hidden">
           {/* Mobile Section Header */}
           <div className="text-center mb-8">
-            <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize">
-              Our Popular <span className="marker-zigzag text-primary">Packages</span>
+            <h2 className="font-reminder text-3xl md:text-4xl text-black leading-none tracking-wide capitalize">
+              Matka Popular <span className="marker-zigzag text-primary">Packages</span>
             </h2>
             <p className="text-gray-dark text-lg md:text-base mt-2">
               Explore our most popular tour packages.
@@ -400,8 +401,8 @@ export default function PackagesShowcase() {
                 </div>
                 <div className="flex flex-col items-center space-y-12">
                   <div className="text-center max-w-sm pb-2">
-                    <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize">
-                      Our Popular{" "}
+                    <h2 className="font-reminder text-3xl md:text-4xl text-black leading-none tracking-wide capitalize">
+                      Matka Popular{" "}
                       <span className="marker-zigzag text-primary">
                         Packages
                       </span>
@@ -444,8 +445,8 @@ export default function PackagesShowcase() {
 
                 <div className="flex flex-col items-center space-y-12">
                   <div className="text-center max-w-sm pb-2">
-                    <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize">
-                      Our Popular{" "}
+                    <h2 className="font-reminder text-3xl md:text-4xl text-black leading-none tracking-wide capitalize">
+                      Matka Popular{" "}
                       <span className="marker-zigzag text-primary">
                         Packages
                       </span>
