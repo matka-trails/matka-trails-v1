@@ -78,10 +78,10 @@ export default function GalleryFramesSection() {
 
         {/* Section Header */}
         <div className="text-center space-y-2 mb-8">
-          <h2 className="font-sans font-black text-2xl md:text-3xl text-black uppercase tracking-tight leading-none">
-            Journey In <span className="marker-highlight text-primary">Frames</span>
+          <h2 className="font-reminder text-4xl md:text-5xl text-black uppercase tracking-tight leading-none">
+            Journey In <span className="marker-zigzag text-primary">Frames</span>
           </h2>
-          <p className="font-reminder text-primary text-xl md:text-2xl not-italic font-normal capitalize tracking-wide block">
+          <p className="font-sans text-primary text-lg md:text-xl not-italic font-normal capitalize tracking-wide block">
             Pictures Perfect Moments
           </p>
         </div>

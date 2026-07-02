@@ -89,28 +89,20 @@ export default function BlogPreview() {
   return (
     <div className="w-full">
       {/* ── SECTION A: BLOG PREVIEWS ── */}
-      <section className="py-20 px-6 lg:px-12 bg-white">
+      <section className="py-14 md:py-8 px-6 lg:px-12 bg-white">
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Header */}
-          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-4">
             <div className="space-y-3">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>FROM THE TRAILS</span>
-              </span>
-              <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize pb-2">
+              <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize">
                 Stories and <span className="marker-zigzag text-primary">Travel Hacks</span>
               </h2>
+
+              <p className="font-sans text-xs md:text-sm font-bold text-gray-mid uppercase tracking-widest">
+                Latest Blogs and Insights
+              </p>
             </div>
-            <div>
-              <Link
-                href="/blog"
-                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary hover:text-primary-dark group"
-              >
-                <span>Read All Stories</span>
-                <MoveRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
+
           </div>
 
           {/* Blogs Grid - 3×3 up to 9 cards */}

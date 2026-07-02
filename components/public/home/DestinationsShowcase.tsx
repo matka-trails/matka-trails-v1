@@ -58,15 +58,17 @@ function DestinationShowcaseCard({
 
 export default function DestinationsShowcase() {
   const [destinations, setDestinations] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     publicApi
       .getDestinations()
       .then((data) => setDestinations(data.slice(0, 6)))
-      .catch((err) => console.error("Destinations fetch error", err));
+      .catch((err) => console.error("Destinations fetch error", err))
+      .finally(() => setIsLoading(false));
   }, []);
 
-  if (destinations.length === 0) return null;
+  if (!isLoading && destinations.length === 0) return null;
 
   return (
     <section className="w-full py-10 md:py-20 overflow-hidden relative">
@@ -81,6 +83,28 @@ export default function DestinationsShowcase() {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
         
+        {isLoading ? (
+          /* ── Shimmer placeholder ── */
+          <div className="space-y-8">
+            <div className="text-center pb-2">
+              <h2 className="font-reminder text-4xl lg:text-5xl text-black leading-none tracking-wide capitalize">
+                Tour <span className="marker-zigzag text-primary">Destinations</span>
+              </h2>
+              <p className="text-gray-dark max-w-xl mx-auto font-sans text-lg mt-2">
+                We've got something for everyone.   
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 max-w-5xl mx-auto">
+              {[180, 230, 180, 180, 230, 180].map((h, i) => (
+                <div key={i} className="flex flex-col items-center gap-3">
+                  <div className="shimmer-bg rounded-3xl w-full" style={{ height: `${h}px` }} />
+                  <div className="shimmer-bg h-4 w-20 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+        <>
         {/* Responsive Staggered Layout */}
         {/* Desktop Staggered View */}
         <div className="hidden lg:flex items-start justify-center gap-6 xl:gap-8 px-4 py-8">
@@ -115,8 +139,11 @@ export default function DestinationsShowcase() {
             {/* Header */}
             <div className="text-center pb-2">
               <h2 className="font-reminder text-4xl lg:text-5xl text-black leading-none tracking-wide capitalize">
-                Tour <span className="marker-zigzag text-primary">Categories</span>
+                Tour <span className="marker-zigzag text-primary">Destinations</span>
               </h2>
+              <p className="text-gray-dark max-w-xl mx-auto font-sans text-lg mt-2">
+                We've got something for everyone.   
+              </p>
             </div>
             
             {/* Center Cards (Side-by-Side) */}
@@ -169,9 +196,12 @@ export default function DestinationsShowcase() {
         <div className="lg:hidden space-y-12">
           {/* Mobile Header */}
           <div className="text-center pb-2">
-            <h2 className="font-reminder text-4xl text-black leading-none tracking-wide capitalize">
-              Tour <span className="marker-zigzag text-primary">Categories</span>
-            </h2>
+            <h2 className="font-reminder text-4xl lg:text-5xl text-black leading-none tracking-wide capitalize">
+                Tour <span className="marker-zigzag text-primary">Destinations</span>
+              </h2>
+              <p className="text-gray-dark max-w-xl mx-auto font-sans text-lg mt-2">
+                We've got something for everyone.   
+              </p>
           </div>
 
           {/* Mobile Grid */}
@@ -198,6 +228,8 @@ export default function DestinationsShowcase() {
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
+        </>
+        )}
       </div>
     </section>
   );

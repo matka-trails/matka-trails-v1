@@ -23,6 +23,24 @@
   z-index: -1;
 }
 
+/* ── Shimmer skeleton animation ─────────────────────────────────── */
+@keyframes shimmer-sweep {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.shimmer-bg {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0px,
+    #e8e8e8 40px,
+    #f0f0f0 80px
+  );
+  background-size: 400px 100%;
+  animation: shimmer-sweep 1.4s infinite linear;
+  border-radius: 0.375rem;
+}
+
 :root {
   /* Brand colors */
   --primary: #ff6600;

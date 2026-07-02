@@ -62,15 +62,11 @@ export default function VideoTestimonialsSection() {
   if (testimonials.length === 0) return null;
 
   return (
-    <section className="py-20 bg-white">
+    <section className=" bg-white">
       <div className="max-w-6xl mx-auto px-6">
         
         {/* Section Header */}
         <div className="text-center space-y-2 mb-12">
-          <div className="inline-flex items-center gap-1.5 bg-primary-light text-primary text-[10px] font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full">
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>Wanderers speak</span>
-          </div>
           <h2 className="font-reminder text-4xl md:text-5xl text-black leading-none tracking-wide capitalize mt-2">
             Real People, <span className="marker-zigzag text-primary">Real Stories</span>
           </h2>
@@ -162,20 +158,6 @@ export default function VideoTestimonialsSection() {
           >
             <ChevronRight className="w-5 h-5 stroke-[3px]" />
           </button>
-        </div>
-
-        {/* Carousel indicator dots */}
-        <div className="flex items-center justify-center gap-2 mt-6">
-          {testimonials.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentIndex(idx)}
-              className={cn(
-                "w-2 h-2 rounded-full transition-all cursor-pointer",
-                currentIndex === idx ? "bg-primary w-5" : "bg-gray-border hover:bg-gray-mid"
-              )}
-            />
-          ))}
         </div>
 
       </div>
