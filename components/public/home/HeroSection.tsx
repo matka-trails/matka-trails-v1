@@ -10,7 +10,31 @@ import { getOptimizedImageUrl } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export default function HeroSection() {
-  const [destinations, setDestinations] = useState<any[]>([]);
+  const DEFAULT_DESTINATIONS = [
+    {
+      id: "default-1",
+      name: "Kedarnath",
+      slug: "kedarnath",
+      description: "Trek to the holy shrine nestled in the majestic Garhwal Himalayas.",
+      coverImage: "https://res.cloudinary.com/afol8skx/image/upload/f_auto,q_auto/v1782819697/destinationbg_i7kvsl.png",
+    },
+    {
+      id: "default-2",
+      name: "Spiti Valley",
+      slug: "spiti-valley",
+      description: "Explore the cold desert mountain valley with ancient monasteries.",
+      coverImage: "https://res.cloudinary.com/afol8skx/image/upload/f_auto,q_auto/v1782819706/tourbg_bhks7i.png",
+    },
+    {
+      id: "default-3",
+      name: "Ladakh",
+      slug: "ladakh",
+      description: "Ride through high mountain passes and pristine alpine lakes.",
+      coverImage: "https://res.cloudinary.com/afol8skx/image/upload/f_auto,q_auto/v1782821160/gallery_a5ssc5.png",
+    },
+  ];
+
+  const [destinations, setDestinations] = useState<any[]>(DEFAULT_DESTINATIONS);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(0);

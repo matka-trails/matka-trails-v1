@@ -5,6 +5,8 @@ import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl, formatDate } from "@/lib/utils";
 import { Compass, Calendar, BookOpen, MoveRight } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Matka Trails Travel Blog — Stories & Guides",
   description: "Read trekking guides, altitude tips, river rafting safety checklists, and stories from solo travelers on our weekend trails.",

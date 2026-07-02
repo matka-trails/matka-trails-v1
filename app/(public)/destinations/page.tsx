@@ -5,6 +5,8 @@ import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl } from "@/lib/utils";
 import { Compass, MoveRight, Sparkles } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Explore Treks by Territories — Matka Trails",
   description: "Browse destinations including Kedarnath, Rishikesh, and Manali. Select your territory to find structured weekend packages.",
@@ -74,6 +76,7 @@ export default async function DestinationsPage() {
                       src={getOptimizedImageUrl(d.coverImage, 800)}
                       alt={d.name}
                       fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover group-hover:scale-103 transition-transform duration-500"
                     />
                   )}

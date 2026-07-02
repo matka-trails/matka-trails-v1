@@ -12,6 +12,8 @@ import ReviewCard from "@/components/public/packages/ReviewCard";
 import BookingPanel from "@/components/public/packages/BookingPanel";
 import FloatingBookCTA from "@/components/public/packages/FloatingBookCTA";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

@@ -7,6 +7,8 @@ import { getOptimizedImageUrl, formatDate } from "@/lib/utils";
 import { Compass, Calendar, Sparkles, HelpCircle } from "lucide-react";
 import BlogContentRenderer from "@/components/public/blog/BlogContentRenderer";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

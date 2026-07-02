@@ -7,6 +7,8 @@ import { getOptimizedImageUrl } from "@/lib/utils";
 import { Compass, Sparkles, MapPin } from "lucide-react";
 import PackageCard from "@/components/public/packages/PackageCard";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
