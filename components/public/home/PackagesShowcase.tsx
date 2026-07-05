@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { publicApi, PublicPackage } from "@/lib/api";
@@ -15,6 +16,21 @@ import {
   ArrowRight,
   Clock,
 } from "lucide-react";
+
+const slideVariants = {
+  initial: (dir: "left" | "right") => ({
+    x: dir === "left" ? "105%" : "-105%",
+    opacity: 0,
+  }),
+  active: {
+    x: "0%",
+    opacity: 1,
+  },
+  exit: (dir: "left" | "right") => ({
+    x: dir === "left" ? "-105%" : "105%",
+    opacity: 0,
+  }),
+};
 
 // ─── Shimmer Skeleton ────────────────────────────────────────────────────────
 function PackageCardSkeleton({ tall = false }: { tall?: boolean }) {
@@ -60,7 +76,7 @@ function PackageZigzagCard({
         className={`bg-white rounded-3xl overflow-hidden flex flex-col transition-all duration-300 group-hover:-translate-y-2
           ${
             isCenter
-              ? "shadow-2xl border-2 border-primary/40 ring-2 ring-primary/5"
+              ? "shadow-lg border-2 border-primary"
               : "shadow-lg border border-gray-border group-hover:shadow-xl"
           }`}
       >
@@ -243,7 +259,7 @@ export default function PackagesShowcase() {
   const [packages, setPackages] = useState<PublicPackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [startIdx, setStartIdx] = useState(0);
-  const [animDir, setAnimDir] = useState<"left" | "right" | null>(null);
+  const [direction, setDirection] = useState<"left" | "right">("left");
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const animating = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -289,23 +305,21 @@ export default function PackagesShowcase() {
   const goNext = () => {
     if (!showNav || animating.current) return;
     animating.current = true;
-    setAnimDir("left");
+    setDirection("left");
+    setStartIdx((prev) => (prev + 1) % total);
     setTimeout(() => {
-      setStartIdx((prev) => (prev + 1) % total);
-      setAnimDir(null);
       animating.current = false;
-    }, 280);
+    }, 450);
   };
 
   const goPrev = () => {
     if (!showNav || animating.current) return;
     animating.current = true;
-    setAnimDir("right");
+    setDirection("right");
+    setStartIdx((prev) => (prev - 1 + total) % total);
     setTimeout(() => {
-      setStartIdx((prev) => (prev - 1 + total) % total);
-      setAnimDir(null);
       animating.current = false;
-    }, 280);
+    }, 450);
   };
 
   return (
@@ -418,32 +432,35 @@ export default function PackagesShowcase() {
                 </div>
               </div>
             ) : (
-              <div
-                className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-start py-8 px-4 md:px-8"
-                style={{
-                  opacity: animDir ? 0.4 : 1,
-                  transform:
-                    animDir === "left"
-                      ? "translateX(-16px)"
-                      : animDir === "right"
-                        ? "translateX(16px)"
-                        : "translateX(0)",
-                  transition: "opacity 0.28s ease, transform 0.28s ease",
-                }}
-              >
-                <div className="flex justify-center lg:pt-16">
-                  {visiblePkgs[0] && (
-                    <PackageZigzagCard
-                      pkg={visiblePkgs[0]}
-                      slot={0}
-                      onClick={() =>
-                        router.push(`/packages/${visiblePkgs[0].slug}`)
-                      }
-                    />
-                  )}
+              <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-start py-8 px-4 md:px-8">
+                {/* Column 1 (Left slot) */}
+                <div className="relative w-full h-[560px] overflow-hidden flex justify-center items-start lg:pt-16">
+                  <AnimatePresence initial={false} custom={direction}>
+                    {visiblePkgs[0] && (
+                      <motion.div
+                        key={visiblePkgs[0].id}
+                        custom={direction}
+                        variants={slideVariants}
+                        initial="initial"
+                        animate="active"
+                        exit="exit"
+                        transition={{ duration: 0.48, ease: [0.25, 1, 0.5, 1] }}
+                        className="absolute w-full flex justify-center"
+                      >
+                        <PackageZigzagCard
+                          pkg={visiblePkgs[0]}
+                          slot={0}
+                          onClick={() =>
+                            router.push(`/packages/${visiblePkgs[0].slug}`)
+                          }
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                <div className="flex flex-col items-center space-y-12">
+                {/* Column 2 (Middle slot) */}
+                <div className="flex flex-col items-center space-y-12 w-full">
                   <div className="text-center max-w-sm pb-2">
                     <h2 className="font-reminder text-3xl md:text-4xl text-black leading-none tracking-wide capitalize">
                       Matka Popular{" "}
@@ -456,27 +473,56 @@ export default function PackagesShowcase() {
                     </p>
                   </div>
 
-                  {visiblePkgs[1] && (
-                    <PackageZigzagCard
-                      pkg={visiblePkgs[1]}
-                      slot={1}
-                      onClick={() =>
-                        router.push(`/packages/${visiblePkgs[1].slug}`)
-                      }
-                    />
-                  )}
+                  <div className="relative w-full h-[560px] overflow-hidden flex justify-center items-start">
+                    <AnimatePresence initial={false} custom={direction}>
+                      {visiblePkgs[1] && (
+                        <motion.div
+                          key={visiblePkgs[1].id}
+                          custom={direction}
+                          variants={slideVariants}
+                          initial="initial"
+                          animate="active"
+                          exit="exit"
+                          transition={{ duration: 0.48, ease: [0.25, 1, 0.5, 1] }}
+                          className="absolute w-full flex justify-center"
+                        >
+                          <PackageZigzagCard
+                            pkg={visiblePkgs[1]}
+                            slot={1}
+                            onClick={() =>
+                              router.push(`/packages/${visiblePkgs[1].slug}`)
+                            }
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
 
-                <div className="flex justify-center lg:pt-16">
-                  {visiblePkgs[2] && (
-                    <PackageZigzagCard
-                      pkg={visiblePkgs[2]}
-                      slot={2}
-                      onClick={() =>
-                        router.push(`/packages/${visiblePkgs[2].slug}`)
-                      }
-                    />
-                  )}
+                {/* Column 3 (Right slot) */}
+                <div className="relative w-full h-[560px] overflow-hidden flex justify-center items-start lg:pt-16">
+                  <AnimatePresence initial={false} custom={direction}>
+                    {visiblePkgs[2] && (
+                      <motion.div
+                        key={visiblePkgs[2].id}
+                        custom={direction}
+                        variants={slideVariants}
+                        initial="initial"
+                        animate="active"
+                        exit="exit"
+                        transition={{ duration: 0.48, ease: [0.25, 1, 0.5, 1] }}
+                        className="absolute w-full flex justify-center"
+                      >
+                        <PackageZigzagCard
+                          pkg={visiblePkgs[2]}
+                          slot={2}
+                          onClick={() =>
+                            router.push(`/packages/${visiblePkgs[2].slug}`)
+                          }
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             )}

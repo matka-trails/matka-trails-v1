@@ -2,14 +2,23 @@ import { z } from "zod";
 
 // ─── Public Lead Submission (from website forms) ───────
 export const createLeadSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
+  name: z.string()
+    .min(1, "Name is required")
+    .max(200)
+    .regex(/^[^0-9]+$/, "Name cannot contain digits"),
   phone: z.string()
     .min(10, "Phone number must be at least 10 digits")
     .max(15, "Phone number is too long")
-    .regex(/^[0-9+\-\s()]+$/, "Please enter a valid phone number"),
-  email: z.string().email("Please enter a valid email").optional().nullable(),
+    .regex(/^[0-9]+$/, "Phone number must contain only digits"),
+  email: z.string().email("Please enter a valid email").optional().nullable().or(z.literal("")),
+  age: z.string()
+    .min(1, "Age is required")
+    .regex(/^[0-9]+$/, "Age must contain only digits")
+    .transform(Number),
+  gender: z.string().min(1, "Gender is required"),
+  occupation: z.string().min(1, "Occupation is required").max(200),
   alternatePhone: z.string()
-    .regex(/^[0-9+\-\s()]*$/, "Please enter a valid phone number")
+    .regex(/^[0-9]*$/, "Please enter a valid phone number")
     .optional()
     .nullable(),
   city: z.string().max(100).optional().nullable(),

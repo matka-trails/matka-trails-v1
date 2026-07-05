@@ -4,11 +4,28 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { publicApi } from "@/lib/api";
 import { ChevronLeft, ChevronRight, Play, X, MessageSquare, Star } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
+const slideVariants = {
+  initial: (dir: "left" | "right") => ({
+    x: dir === "left" ? "105%" : "-105%",
+    opacity: 0,
+  }),
+  active: {
+    x: "0%",
+    opacity: 1,
+  },
+  exit: (dir: "left" | "right") => ({
+    x: dir === "left" ? "-105%" : "105%",
+    opacity: 0,
+  }),
+};
+
 export default function VideoTestimonialsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState<"left" | "right">("left");
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
 
   const { data: testimonials = [], isLoading } = useQuery({
@@ -18,11 +35,13 @@ export default function VideoTestimonialsSection() {
 
   const nextSlide = () => {
     if (testimonials.length === 0) return;
+    setDirection("left");
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
   };
 
   const prevSlide = () => {
     if (testimonials.length === 0) return;
+    setDirection("right");
     setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
@@ -87,68 +106,79 @@ export default function VideoTestimonialsSection() {
           </button>
 
           {/* Current Active Card Frame */}
-          <div className="w-full bg-white border border-gray-border rounded-3xl overflow-hidden shadow-card hover:shadow-float transition-all duration-300">
-            {testimonials.map((t, idx) => {
-              if (idx !== currentIndex) return null;
+          <div className="w-full bg-white border border-gray-border rounded-3xl overflow-hidden shadow-card hover:shadow-float relative aspect-[16/11] md:aspect-[16/10]">
+            <AnimatePresence initial={false} custom={direction}>
+              {testimonials.map((t, idx) => {
+                if (idx !== currentIndex) return null;
 
-              const ytId = getYoutubeId(t.videoUrl);
-              const thumbUrl = t.thumbnail || (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : "/images/placeholder.jpg");
+                const ytId = getYoutubeId(t.videoUrl);
+                const thumbUrl = t.thumbnail || (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : "/images/placeholder.jpg");
 
-              return (
-                <div key={t.id} className="animate-fadeIn">
-                  {/* Thumbnail & Play button container */}
-                  <div
-                    onClick={() => setActiveVideoUrl(getEmbedUrl(t.videoUrl))}
-                    className="relative w-full aspect-video bg-black cursor-pointer group overflow-hidden"
+                return (
+                  <motion.div
+                    key={t.id}
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="active"
+                    exit="exit"
+                    transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+                    className="absolute inset-0 flex flex-col h-full w-full"
                   >
-                    <Image
-                      src={thumbUrl}
-                      alt={t.title}
-                      fill
-                      priority
-                      className="object-cover opacity-90 group-hover:scale-101 transition-transform duration-500"
-                    />
+                    {/* Thumbnail & Play button container */}
+                    <div
+                      onClick={() => setActiveVideoUrl(getEmbedUrl(t.videoUrl))}
+                      className="relative w-full aspect-video bg-black cursor-pointer group overflow-hidden"
+                    >
+                      <Image
+                        src={thumbUrl}
+                        alt={t.title}
+                        fill
+                        priority
+                        className="object-cover opacity-90 group-hover:scale-101 transition-transform duration-500"
+                      />
 
-                    {/* Semi-transparent radial shadow overlay */}
-                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors z-10" />
+                      {/* Semi-transparent radial shadow overlay */}
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors z-10" />
 
-                    {/* Custom YouTube-style red play button in the center */}
-                    <div className="absolute inset-0 flex items-center justify-center z-25">
-                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary flex items-center justify-center text-white shadow-orange hover:scale-108 transition-all duration-300">
-                        <Play className="w-7 h-7 md:w-8 md:h-8 fill-white text-white ml-1 shrink-0" />
+                      {/* Custom YouTube-style red play button in the center */}
+                      <div className="absolute inset-0 flex items-center justify-center z-25">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary flex items-center justify-center text-white shadow-orange hover:scale-108 transition-all duration-300">
+                          <Play className="w-7 h-7 md:w-8 md:h-8 fill-white text-white ml-1 shrink-0" />
+                        </div>
+                      </div>
+
+                      {/* Top rating strip */}
+                      <div className="absolute top-4 left-4 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-xs border border-gray-border rounded-xl px-3 py-1.5 shadow-md">
+                        <div className="flex gap-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-black uppercase text-black tracking-wide ml-1">
+                          5.0 Review
+                        </span>
                       </div>
                     </div>
 
-                    {/* Top rating strip */}
-                    <div className="absolute top-4 left-4 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-xs border border-gray-border rounded-xl px-3 py-1.5 shadow-md">
-                      <div className="flex gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
-                        ))}
+                    {/* Title Bar bottom */}
+                    <div className="p-6 md:p-8 flex items-center gap-4 bg-gray-bg/40 border-t border-gray-border flex-1">
+                      <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary shrink-0 font-sans font-black italic uppercase tracking-wider text-xs">
+                        MT
                       </div>
-                      <span className="text-[10px] font-black uppercase text-black tracking-wide ml-1">
-                        5.0 Review
-                      </span>
+                      <div className="flex-1">
+                        <h4 className="font-sans font-extrabold text-sm md:text-base text-black leading-snug">
+                          {t.title}
+                        </h4>
+                        <p className="text-[10px] text-gray-light font-bold uppercase tracking-wider mt-0.5">
+                          Matka Trails Explorer Reviews
+                        </p>
+                      </div>
                     </div>
-                  </div>
-
-                  {/* Title Bar bottom */}
-                  <div className="p-6 md:p-8 flex items-center gap-4 bg-gray-bg/40 border-t border-gray-border">
-                    <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary shrink-0 font-sans font-black italic uppercase tracking-wider text-xs">
-                      MT
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-sans font-extrabold text-sm md:text-base text-black leading-snug">
-                        {t.title}
-                      </h4>
-                      <p className="text-[10px] text-gray-light font-bold uppercase tracking-wider mt-0.5">
-                        Matka Trails Explorer Reviews
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
 
           {/* Navigation - Right Arrow */}

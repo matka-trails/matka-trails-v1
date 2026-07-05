@@ -79,11 +79,14 @@ export default function LeadsConsole() {
     const confirmedLeads = filteredLeads.filter((l: any) => l.status === "CONFIRMED");
     const targets = confirmedLeads.length > 0 ? confirmedLeads : filteredLeads;
 
-    const headers = ["Name", "Phone", "Email", "Package", "Group Size", "Travel Date", "Status", "Received Date"];
+    const headers = ["Name", "Phone", "Email", "Age", "Gender", "Occupation", "Package", "Group Size", "Travel Date", "Status", "Received Date"];
     const rows = targets.map((l: any) => [
       l.name,
       l.phone,
       l.email || "",
+      l.age || "",
+      l.gender || "",
+      l.occupation || "",
       l.package?.title || "General Inquiry",
       l.groupSize || 1,
       l.preferredDate || "",
@@ -312,6 +315,28 @@ export default function LeadsConsole() {
                 <span className="text-[9px] text-gray-light uppercase tracking-wider block mb-1">Email Address</span>
                 <span className="text-black text-sm font-bold break-all">
                   {activeLead.email || "—"}
+                </span>
+              </div>
+            </div>
+
+            {/* Traveler Demographics */}
+            <div className="grid grid-cols-3 gap-4 border-b border-gray-border pb-5">
+              <div>
+                <span className="text-[9px] text-gray-light uppercase tracking-wider block mb-1">Age</span>
+                <span className="text-black text-sm font-bold">
+                  {activeLead.age ? `${activeLead.age} Years` : "—"}
+                </span>
+              </div>
+              <div>
+                <span className="text-[9px] text-gray-light uppercase tracking-wider block mb-1">Gender</span>
+                <span className="text-black text-sm font-bold uppercase">
+                  {activeLead.gender || "—"}
+                </span>
+              </div>
+              <div>
+                <span className="text-[9px] text-gray-light uppercase tracking-wider block mb-1">Occupation</span>
+                <span className="text-black text-sm font-bold truncate block">
+                  {activeLead.occupation || "—"}
                 </span>
               </div>
             </div>
