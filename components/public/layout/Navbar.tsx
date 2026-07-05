@@ -36,8 +36,8 @@ export default function Navbar() {
           "fixed top-0 left-0 right-0 z-40 h-[72px] transition-all duration-300",
           isHomePage
             ? scrolled
-              ? "bg-white/95 backdrop-blur-md shadow-card border-b border-gray-border"
-              : "bg-transparent text-foreground"
+              ? "bg-white/95 backdrop-blur-md shadow-card border-b border-gray-border text-foreground"
+              : "bg-transparent text-white"
             : "bg-white/95 backdrop-blur-md shadow-card border-b border-gray-border text-foreground"
         )}
       >
@@ -46,7 +46,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2 relative z-50">
             <div className="h-10 w-[140px] relative overflow-hidden rounded-md border border-gray-border/10">
               <Image
-                src="/logo1.png"
+                src="/matka.png"
                 alt="Matka Trails"
                 fill
                 className="object-cover"
@@ -66,23 +66,25 @@ export default function Navbar() {
               { label: "Contact", href: "/contact" },
             ].map((link) => {
               const isActive = pathname === link.href;
+              const isTransparent = isHomePage && !scrolled;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "font-sans font-semibold text-[13px] tracking-wide uppercase transition-all relative py-2 group text-foreground hover:text-primary",
-                    isActive && "text-primary"
+                    "font-sans font-semibold text-[13px] tracking-wide uppercase transition-all relative py-2 group hover:text-primary",
+                    isTransparent ? "text-white/90 hover:text-white" : "text-foreground",
+                    isActive && (isTransparent ? "text-white" : "text-primary")
                   )}
                 >
                   {link.label}
                   {/* Active underline */}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-primary rounded-full" />
+                    <span className={cn("absolute bottom-0 left-0 w-full h-[2px] rounded-full", isTransparent ? "bg-white" : "bg-primary")} />
                   )}
                   {/* Hover underline that grows from left */}
                   {!isActive && (
-                    <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-primary rounded-full group-hover:w-full transition-all duration-200" />
+                    <span className={cn("absolute bottom-0 left-0 w-0 h-[2px] rounded-full group-hover:w-full transition-all duration-200", isTransparent ? "bg-white" : "bg-primary")} />
                   )}
                 </Link>
               );
@@ -98,11 +100,11 @@ export default function Navbar() {
               className={cn(
                 "flex items-center gap-2 font-semibold text-xs uppercase tracking-wide px-4 py-2.5 rounded-pill transition-all",
                 isHomePage && !scrolled
-                  ? "bg-gray-100 hover:bg-gray-200 text-black border border-gray-200"
+                  ? "bg-white/10 hover:bg-white/20 text-white border border-white/20"
                   : "bg-gray-bg hover:bg-gray-border text-foreground border border-gray-border"
               )}
             >
-              <PhoneCall className="w-4 h-4 text-primary" />
+              <PhoneCall className={cn("w-4 h-4", isHomePage && !scrolled ? "text-white" : "text-primary")} />
               <span>Connect</span>
             </a>
 
@@ -117,7 +119,12 @@ export default function Navbar() {
           {/* Mobile Hamburger menu */}
           <button
             onClick={toggleMobileMenu}
-            className="lg:hidden p-2 relative z-50 text-current hover:text-primary transition-colors"
+            className={cn(
+              "lg:hidden p-2 relative z-50 transition-colors",
+              isHomePage && !scrolled
+                ? "text-primary hover:text-primary-dark"
+                : "text-foreground hover:text-primary"
+            )}
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

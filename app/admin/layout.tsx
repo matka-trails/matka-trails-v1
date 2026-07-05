@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Camera,
   ShieldCheck,
+  LayoutGrid,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { label: "Destinations", href: "/admin/destinations", icon: <MapPin className="w-4 h-4" /> },
   { label: "Blogs & Guides", href: "/admin/blogs", icon: <BookOpen className="w-4 h-4" /> },
   { label: "Gallery & Videos", href: "/admin/gallery", icon: <Camera className="w-4 h-4" /> },
+  { label: "Hero Settings", href: "/admin/hero", icon: <LayoutGrid className="w-4 h-4" /> },
 ];
 
 function AdminLayoutInner({ children }: { children: React.ReactNode }) {

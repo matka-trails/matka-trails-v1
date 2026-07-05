@@ -196,10 +196,42 @@ async function handleResponse(res: Response) {
   return json;
 }
 
+export interface HeroCarouselSlide {
+  _id: string;
+  imageUrl: string;
+  destinationId: string | null;
+  destination?: { id: string; name: string; slug: string } | null;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string | Date;
+}
+
+export interface HeroDesktopCard {
+  _id: string;
+  imageUrl: string;
+  destinationName: string | null;
+  sortOrder: number;
+}
+
+export interface HeroConfig {
+  _id: string;
+  desktopBgImage: string | null;
+  desktopDynamicWords: string[];
+  desktopCards: HeroDesktopCard[];
+  mobileCarouselSlides: HeroCarouselSlide[];
+  updatedAt: string | Date;
+}
+
 /**
  * Public facing API requests.
  */
 export const publicApi = {
+  async getHeroConfig(): Promise<HeroConfig> {
+    const res = await fetch(`${BASE_URL}/api/public/hero`);
+    const json = await handleResponse(res);
+    return json.data;
+  },
+
   async getDestinations(): Promise<PublicDestination[]> {
     const res = await fetch(`${BASE_URL}/api/public/destinations`);
     const json = await handleResponse(res);
@@ -502,4 +534,64 @@ export const adminApi = {
     });
     return (await handleResponse(res)).data;
   },
+
+  async getHeroConfig(): Promise<HeroConfig> {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/hero`, { headers });
+    return (await handleResponse(res)).data;
+  },
+
+  async updateHeroConfig(data: {
+    desktopBgImage?: string | null;
+    desktopDynamicWords?: string[];
+    desktopCards?: Array<{ imageUrl: string; destinationName?: string | null; sortOrder?: number }>;
+  }): Promise<HeroConfig> {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/hero`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(data),
+    });
+    return (await handleResponse(res)).data;
+  },
+
+  async addHeroSlide(data: {
+    imageUrl: string;
+    destinationId?: string | null;
+    sortOrder?: number;
+    isActive?: boolean;
+  }): Promise<HeroConfig> {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/hero/slides`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(data),
+    });
+    return (await handleResponse(res)).data;
+  },
+
+  async updateHeroSlide(slideId: string, data: {
+    imageUrl?: string;
+    destinationId?: string | null;
+    sortOrder?: number;
+    isActive?: boolean;
+  }): Promise<HeroConfig> {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/hero/slides/${slideId}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(data),
+    });
+    return (await handleResponse(res)).data;
+  },
+
+  async deleteHeroSlide(slideId: string): Promise<void> {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/hero/slides/${slideId}`, {
+      method: "DELETE",
+      headers,
+    });
+    await handleResponse(res);
+  },
 };
+

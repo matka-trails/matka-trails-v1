@@ -1,4 +1,5 @@
-import Hero from "@/components/public/home/Hero";
+import HeroNew from "@/components/public/home/HeroNew";
+import DestinationExplorer from "@/components/public/home/DestinationExplorer";
 import TrustStrip from "@/components/public/home/TrustStrip";
 import TickerSection from "@/components/public/home/TickerSection";
 import PackagesShowcase from "@/components/public/home/PackagesShowcase";
@@ -16,8 +17,11 @@ export default function Home() {
   return (
     <QueryProvider>
       <div className="flex flex-col w-full min-h-screen">
-        {/* 1. Immersive Hero showcase */}
-        <Hero />
+        {/* 1. New Immersive Hero */}
+        <HeroNew />
+
+        {/* 2. Destination Explorer — Story circles + packages grid */}
+        <DestinationExplorer />
 
         {/* 2. Trust Credentials Strip */}
         {/* <TrustStrip /> */}
