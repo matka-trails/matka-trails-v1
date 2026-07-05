@@ -8,6 +8,8 @@ import DestinationsShowcase from "@/components/public/home/DestinationsShowcase"
 import GalleryFramesSection from "@/components/public/home/GalleryFramesSection";
 import WhyMatkaTrails from "@/components/public/home/WhyMatkaTrails";
 import VideoTestimonialsSection from "@/components/public/home/VideoTestimonialsSection";
+import TextTestimonialsSection from "@/components/public/home/TextTestimonialsSection";
+import FounderSection from "@/components/public/home/FounderSection";
 import StatsBar from "@/components/public/home/StatsBar";
 import BlogPreview from "@/components/public/home/BlogPreview";
 import ContactSection from "@/components/public/home/ContactSection";
@@ -46,6 +48,12 @@ export default function Home() {
 
         {/* 7.5 Real People Real Stories Video Testimonials */}
         <VideoTestimonialsSection />
+
+        {/* 7.6 Traveler Reviews Ticker/Carousel */}
+        <TextTestimonialsSection />
+
+        {/* 7.7 Founder Background & Trust Credentials */}
+        <FounderSection />
 
         {/* 8. Stats count-ups */}
         {/* <StatsBar /> */}

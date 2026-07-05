@@ -222,6 +222,16 @@ export interface HeroConfig {
   updatedAt: string | Date;
 }
 
+export interface TextTestimonial {
+  id: string;
+  _id?: string;
+  name: string;
+  stars: number;
+  message: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
 /**
  * Public facing API requests.
  */
@@ -230,6 +240,12 @@ export const publicApi = {
     const res = await fetch(`${BASE_URL}/api/public/hero`);
     const json = await handleResponse(res);
     return json.data;
+  },
+
+  async getTextTestimonials(): Promise<TextTestimonial[]> {
+    const res = await fetch(`${BASE_URL}/api/public/text-testimonials`);
+    const json = await handleResponse(res);
+    return json.data || [];
   },
 
   async getDestinations(): Promise<PublicDestination[]> {
@@ -588,6 +604,45 @@ export const adminApi = {
   async deleteHeroSlide(slideId: string): Promise<void> {
     const headers = await getAuthHeaders();
     const res = await fetch(`${BASE_URL}/api/admin/hero/slides/${slideId}`, {
+      method: "DELETE",
+      headers,
+    });
+    await handleResponse(res);
+  },
+
+  async getTextTestimonials(params?: { page?: number; limit?: number }): Promise<{ items: TextTestimonial[]; total: number; page: number; limit: number }> {
+    const headers = await getAuthHeaders();
+    const query = new URLSearchParams(params as any).toString();
+    const res = await fetch(`${BASE_URL}/api/admin/text-testimonials?${query}`, { headers });
+    const json = await handleResponse(res);
+    return json.data || { items: [], total: 0, page: 1, limit: 10 };
+  },
+
+  async createTextTestimonial(data: { name: string; stars: number; message: string; sortOrder?: number }): Promise<TextTestimonial> {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/text-testimonials`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(data),
+    });
+    const json = await handleResponse(res);
+    return json.data;
+  },
+
+  async updateTextTestimonial(id: string, data: Partial<TextTestimonial>): Promise<TextTestimonial> {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/text-testimonials/${id}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(data),
+    });
+    const json = await handleResponse(res);
+    return json.data;
+  },
+
+  async deleteTextTestimonial(id: string): Promise<void> {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/text-testimonials/${id}`, {
       method: "DELETE",
       headers,
     });

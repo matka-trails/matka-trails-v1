@@ -80,7 +80,7 @@ export const authOptions: NextAuthOptions = {
     error: "/admin/login",
   },
 
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "matka-trails-super-secret-jwt-key-2024",
 
   ...(process.env.VERCEL_URL ? { trustHost: true } : {}),
 };
