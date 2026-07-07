@@ -11,6 +11,7 @@ import PackageGallery from "@/components/public/packages/PackageGallery";
 import ReviewCard from "@/components/public/packages/ReviewCard";
 import BookingPanel from "@/components/public/packages/BookingPanel";
 import FloatingBookCTA from "@/components/public/packages/FloatingBookCTA";
+import QuickCallForm from "@/components/public/destinations/QuickCallForm";
 
 export const dynamic = "force-dynamic";
 
@@ -113,10 +114,10 @@ export default async function PackageDetailPage({ params }: PageProps) {
       </div>
 
       {/* ── Section B: Main Details Grid (2 Columns) ── */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
         
-        {/* Left Column: Descriptions, Tab Items, Itineraries */}
-        <div className="lg:col-span-2 space-y-12">
+        {/* Left Column: Descriptions, Tab Items, Itineraries (Spans 8 columns) */}
+        <div className="lg:col-span-8 space-y-12">
           
           {/* Package Overview */}
           <div className="space-y-4">
@@ -198,9 +199,13 @@ export default async function PackageDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Right Column: Sticky booking pane (Desktop) */}
-        <div>
+        {/* Right Column: Sticky booking pane + Callback form (Desktop, Spans 4 columns) */}
+        <div className="lg:col-span-4 space-y-8">
           <BookingPanel pkg={pkg as any} />
+          <QuickCallForm
+            packageId={pkg.id}
+            defaultDestination={pkg.destination?.name || ""}
+          />
         </div>
       </div>
 

@@ -1,28 +1,41 @@
-import PackageFilters from "@/components/public/packages/PackageFilters";
 import PackageGrid from "@/components/public/packages/PackageGrid";
-import { MessageSquare, PhoneCall, Compass } from "lucide-react";
-import Image from "next/image";
+import QuickCallForm from "@/components/public/destinations/QuickCallForm";
+import MobileQuickQuote from "@/components/public/destinations/MobileQuickQuote";
+import WhyMatkaTrails from "@/components/public/home/WhyMatkaTrails";
+import TextTestimonialsSection from "@/components/public/home/TextTestimonialsSection";
+import GalleryFramesSection from "@/components/public/home/GalleryFramesSection";
+import VideoTestimonialsSection from "@/components/public/home/VideoTestimonialsSection";
+import Faqs from "@/components/public/home/Faqs";
+import ContactSection from "@/components/public/home/ContactSection";
+import { Compass } from "lucide-react";
 
 export const metadata = {
   title: "All Weekend Trails & Treks — Matka Trails",
   description: "Browse hand-crafted group treks and adventure packages. Use filters to lock your duration, budget and formats.",
 };
 
+const DEFAULT_BG =
+  "https://res.cloudinary.com/afol8skx/image/upload/f_auto,q_auto/v1783245391/bgCover_d221x3.png";
+
 export default function PackagesPage() {
   return (
-    <div className="w-full bg-gray-bg min-h-screen pb-20">
-      {/* ── 1. Page Header Hero Strip ── */}
-      <div className="relative w-full h-[240px] bg-gradient-to-r from-neutral-950 via-neutral-900 to-neutral-950 overflow-hidden flex items-center border-b border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+    <div className="w-full bg-gray-bg min-h-screen">
+      {/* ── 1. Page Header Hero Strip with Cloudinary Background & Black Overlay ── */}
+      <div 
+        className="relative w-full h-[280px] md:h-[300px] bg-cover bg-center bg-no-repeat overflow-hidden flex items-center border-b border-white/5 shrink-0 z-10"
+        style={{ backgroundImage: `url(${DEFAULT_BG})` }}
+      >
+        {/* Dark overlay inside the header banner to ensure text readability */}
+        <div className="absolute inset-0 bg-neutral-950/70 z-0 pointer-events-none" />
 
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <div className="space-y-2 text-white">
-            <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5 leading-none">
               <Compass className="w-4 h-4" />
               <span>TERRITORY DIRECTORY</span>
             </span>
             <h1 className="font-sans font-black italic text-4xl lg:text-5xl uppercase leading-none tracking-tight">
-              Find Your <span className="text-primary italic">Trail.</span>
+              Find Your <span className="text-primary italic">Trail</span>
             </h1>
             <p className="text-xs lg:text-sm text-white/60 leading-relaxed font-semibold max-w-md">
               All departures are led by verified group captains. Find details, day-by-day trails, and book in 30 seconds.
@@ -32,66 +45,43 @@ export default function PackagesPage() {
       </div>
 
       {/* ── 2. Content Layout (Grid + Sidebar) ── */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Main Filters & Listing Grid */}
-        <div className="lg:col-span-3 space-y-6">
-          {/* Dynamic Filters bar */}
-          <PackageFilters />
-          
+        {/* Main Listing Grid (Spans 8 columns on desktop) */}
+        <div className="lg:col-span-8 space-y-6">
           {/* Query loader grid */}
           <PackageGrid />
         </div>
 
-        {/* Right Help Sidebar */}
-        <div className="space-y-6">
-          {/* Custom trail card */}
-          <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-card space-y-4">
-            <div className="w-10 h-10 bg-primary-light rounded-xl flex items-center justify-center text-primary">
-              <MessageSquare className="w-5 h-5" />
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="font-sans font-extrabold text-sm text-black">
-                Need a Custom Trail?
-              </h3>
-              <p className="text-xs text-gray-mid leading-relaxed font-semibold">
-                Planning a corporate team outing, college group, or family reunion? Let our Captain draft a customized itinerary for you.
-              </p>
-            </div>
-            
-            <a
-              href="https://wa.me/919999999999?text=Hi%20Matka%20Trails%2C%20I%20want%20to%20plan%20a%20custom%20group%20trip%20..."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary-dark text-white font-bold text-xs uppercase tracking-wide py-3.5 rounded-xl shadow-orange transition-colors"
-            >
-              <PhoneCall className="w-4 h-4 shrink-0" />
-              <span>Talk to Captain</span>
-            </a>
-          </div>
-
-          {/* Quick FAQ summary box */}
-          <div className="bg-[#111111] text-white rounded-2xl p-6 shadow-card space-y-3">
-            <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">
-              Trail Guidelines
-            </h4>
-            <ul className="space-y-3 text-xs font-semibold text-white/70">
-              <li className="flex items-start gap-2">
-                <span className="text-primary font-bold">✦</span>
-                <span>Structured dynamic groups tailored by age/interests.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary font-bold">✦</span>
-                <span>Verified Group Captains lead every trek.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary font-bold">✦</span>
-                <span>Medical support kits & guides on-site.</span>
-              </li>
-            </ul>
-          </div>
+        {/* Right Sticky Form Sidebar (Spans 4 columns on desktop, hidden on mobile) */}
+        <div className="hidden lg:block lg:col-span-4 lg:sticky lg:top-24 z-20">
+          <QuickCallForm />
         </div>
       </div>
+
+      {/* ── 3. Extra Sections rendered sequentially with no gap margins ── */}
+      <div className="mt-8">
+        {/* Why Matka Trails DNA Section */}
+        <WhyMatkaTrails />
+
+        {/* Reviews Ticker Section */}
+        <TextTestimonialsSection />
+
+        {/* Gallery Frame panorama */}
+        <GalleryFramesSection />
+
+        {/* Video Testimonials */}
+        <VideoTestimonialsSection />
+
+        {/* Global FAQs Section */}
+        <Faqs />
+
+        {/* Contact Form Section */}
+        <ContactSection />
+      </div>
+
+      {/* Mobile / Tablet sticky quote drawer bar */}
+      <MobileQuickQuote />
     </div>
   );
 }

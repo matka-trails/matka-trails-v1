@@ -9,25 +9,16 @@ import { Frown, Compass } from "lucide-react";
 
 export default function PackageGrid() {
   const router = useRouter();
-  const { filters } = useUiStore();
-
   const { data, isLoading, error } = useQuery({
-    queryKey: ["public-packages", filters],
-    queryFn: () =>
-      publicApi.getPackages({
-        destinationId: filters.destinationId || undefined,
-        groupType: filters.groupType || undefined,
-        search: filters.search || undefined,
-        sort: filters.sort || undefined,
-        maxPrice: filters.maxPrice < 50000 ? filters.maxPrice : undefined,
-      }),
+    queryKey: ["public-packages"],
+    queryFn: () => publicApi.getPackages(),
   });
 
   const packages = data?.packages || [];
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div key={i} className="h-[460px] bg-white border border-gray-border rounded-2xl p-5 space-y-4 animate-pulse">
             <div className="h-[240px] bg-gray-bg rounded-xl animate-shimmer" />
@@ -73,7 +64,7 @@ export default function PackageGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {packages.map((pkg) => (
         <div
           key={pkg.id}

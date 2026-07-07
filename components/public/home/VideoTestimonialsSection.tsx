@@ -81,7 +81,7 @@ export default function VideoTestimonialsSection() {
   if (testimonials.length === 0) return null;
 
   return (
-    <section className=" bg-white">
+    <section className="bg-white py-16">
       <div className="max-w-6xl mx-auto px-6">
         
         {/* Section Header */}
