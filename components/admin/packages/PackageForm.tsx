@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { adminApi, publicApi, PublicDestination } from "@/lib/api";
+import { getSession } from "next-auth/react";
 import { getOptimizedImageUrl } from "@/lib/utils";
 import { toast } from "react-hot-toast";
 import {
@@ -34,6 +35,8 @@ const packageFormSchema = z.object({
   summary: z.string().max(300).optional(),
   description: z.string().min(1, "Description is required"),
   status: z.enum(["DRAFT", "PUBLISHED"]),
+  notes: z.string().optional(),
+  pdfUrl: z.string().optional(),
 });
 
 type PackageFormInput = z.infer<typeof packageFormSchema>;
@@ -46,7 +49,11 @@ export default function PackageForm({ initialData }: PackageFormProps) {
   const router = useRouter();
   const [destinations, setDestinations] = useState<PublicDestination[]>([]);
   const [coverImage, setCoverImage] = useState<string>(initialData?.coverImage || "");
+  const [pdfUrl, setPdfUrl] = useState<string>(initialData?.pdfUrl || "");
+  const [galleryImages, setGalleryImages] = useState<string[]>(initialData?.galleryImages || []);
   const [uploading, setUploading] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Dynamic sections: Itinerary Days
@@ -80,6 +87,8 @@ export default function PackageForm({ initialData }: PackageFormProps) {
       summary: initialData?.summary || "",
       description: initialData?.description || "",
       status: initialData?.status || "DRAFT",
+      notes: initialData?.notes || "",
+      pdfUrl: initialData?.pdfUrl || "",
     },
   });
 
@@ -139,6 +148,77 @@ export default function PackageForm({ initialData }: PackageFormProps) {
     }
   };
 
+  // Upload PDF to our own backend server (avoids Cloudinary 'untrusted customer' error for raw files)
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPdf(true);
+    try {
+      const formData = new FormData();
+      formData.append("pdf", file);
+
+      const session = await getSession();
+      const token = (session as any)?.accessToken as string | undefined;
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001").replace(/\/$/, "");
+
+      const res = await fetch(`${apiBase}/api/admin/upload/pdf`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      const json = await res.json();
+      if (json.success && json.data?.url) {
+        setPdfUrl(json.data.url);
+        toast.success("PDF Itinerary uploaded successfully!");
+      } else {
+        const msg = json.error?.message || "Failed to upload PDF Itinerary.";
+        toast.error(msg);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Server connection failed. Please try again.");
+    } finally {
+      setUploadingPdf(false);
+    }
+  };
+
+  // Direct Cloudinary Gallery Image Upload
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingGallery(true);
+    try {
+      const sigData = await adminApi.getUploadSignature("packages");
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("api_key", sigData.api_key);
+      formData.append("timestamp", String(sigData.timestamp));
+      formData.append("signature", sigData.signature);
+      formData.append("folder", sigData.folder);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${sigData.cloud_name}/image/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await res.json();
+      if (json.secure_url) {
+        setGalleryImages((prev) => [...prev, json.secure_url]);
+        toast.success("Image added to gallery!");
+      } else {
+        toast.error("Failed to upload image.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Cloudinary connection failed.");
+    } finally {
+      setUploadingGallery(false);
+    }
+  };
+
   // Itinerary CRUD helper functions
   const addItineraryDay = () => {
     setItineraryDays((prev) => [
@@ -186,6 +266,8 @@ export default function PackageForm({ initialData }: PackageFormProps) {
       const payload = {
         ...data,
         coverImage,
+        pdfUrl,
+        galleryImages,
         inclusions,
         exclusions,
         itinerary: itineraryDays.map((day) => ({
@@ -349,13 +431,14 @@ export default function PackageForm({ initialData }: PackageFormProps) {
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
 
+                  {/* Day header */}
                   <div className="flex items-center gap-3">
-                    <span className="font-sans font-black italic text-xs text-primary bg-primary-light border border-primary/20 px-2.5 py-1.5 rounded-lg">
+                    <span className="text-[10px] font-black text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md uppercase tracking-wider">
                       Day {day.dayNumber}
                     </span>
                     <input
                       type="text"
-                      placeholder="Title of this day's activity"
+                      placeholder="Enter heading..."
                       value={day.title}
                       onChange={(e) => updateItineraryDay(idx, "title", e.target.value)}
                       className="flex-1 bg-transparent border-b border-gray-border focus:border-primary text-xs font-bold focus:outline-none pb-1"
@@ -371,6 +454,50 @@ export default function PackageForm({ initialData }: PackageFormProps) {
                   />
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Section C: Camp & Trail Gallery Images */}
+          <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-card space-y-4">
+            <h3 className="font-sans font-extrabold text-sm text-black flex items-center gap-2 uppercase tracking-wide">
+              <Compass className="w-4.5 h-4.5 text-primary shrink-0" />
+              <span>Camp &amp; Trail Gallery</span>
+            </h3>
+            <p className="text-[10px] text-gray-light font-bold uppercase tracking-wider">
+              Add multiple photo frames showcasing campsites, viewpoints, and journey highlights
+            </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {galleryImages.map((img, idx) => (
+                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-gray-border bg-gray-bg group">
+                  <img src={getOptimizedImageUrl(img, 300)} alt={`Gallery item ${idx + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setGalleryImages(galleryImages.filter((_, i) => i !== idx))}
+                    className="absolute top-2 right-2 bg-black/60 hover:bg-rose-600 p-1.5 rounded-full text-white cursor-pointer transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+
+              <label className="border-2 border-dashed border-gray-border hover:border-primary/45 rounded-xl aspect-video flex flex-col items-center justify-center text-center p-4 cursor-pointer bg-gray-bg/10 hover:bg-primary-light/5 transition-all">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleGalleryUpload}
+                  disabled={uploadingGallery}
+                  className="hidden"
+                />
+                {uploadingGallery ? (
+                  <span className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Plus className="w-5 h-5 text-gray-light mb-1 hover:text-primary" />
+                    <span className="text-[9px] font-bold text-gray-dark uppercase tracking-wider">Add Photo</span>
+                  </>
+                )}
+              </label>
             </div>
           </div>
 
@@ -538,6 +665,104 @@ export default function PackageForm({ initialData }: PackageFormProps) {
                 Add
               </button>
             </div>
+          </div>
+
+          {/* Exclusions editor */}
+          <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-card space-y-4">
+            <h3 className="font-sans font-extrabold text-sm text-black flex items-center gap-2 uppercase tracking-wide">
+              <X className="w-4.5 h-4.5 text-primary shrink-0" />
+              <span>Exclusions List</span>
+            </h3>
+
+            {/* Dynamic chips list */}
+            <div className="flex flex-wrap gap-1.5 min-h-[40px] border border-gray-border rounded-xl p-3 bg-gray-bg/25">
+              {exclusions.map((exc, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-1 bg-white border border-gray-border text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md"
+                >
+                  <span>{exc}</span>
+                  <button type="button" onClick={() => setExclusions(exclusions.filter((_, idx) => idx !== i))}>
+                    <X className="w-3 h-3 hover:text-primary" />
+                  </button>
+                </span>
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Add exclusion item..."
+                value={newExclusion}
+                onChange={(e) => setNewExclusion(e.target.value)}
+                className="flex-1 px-4 py-2.5 bg-gray-bg border border-gray-border rounded-xl text-xs font-semibold focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={addExclusionItem}
+                className="bg-[#111111] text-white px-4 rounded-xl text-xs font-bold cursor-pointer"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+
+          {/* PDF Upload */}
+          <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-card space-y-4">
+            <h3 className="font-sans font-extrabold text-sm text-black flex items-center gap-2 uppercase tracking-wide">
+              <Upload className="w-4.5 h-4.5 text-primary shrink-0" />
+              <span>Itinerary PDF Document</span>
+            </h3>
+
+            {pdfUrl ? (
+              <div className="flex items-center justify-between border border-gray-border rounded-xl p-3.5 bg-gray-bg/25">
+                <div className="min-w-0 flex-1 pr-3">
+                  <span className="text-[10px] text-gray-light font-bold uppercase block">Uploaded Itinerary PDF</span>
+                  <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary font-bold hover:underline truncate block">
+                    {pdfUrl.substring(pdfUrl.lastIndexOf("/") + 1)}
+                  </a>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPdfUrl("")}
+                  className="p-1.5 rounded-lg border border-rose-100 bg-rose-50 text-rose-500 hover:bg-rose-100 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <label className="border-2 border-dashed border-gray-border hover:border-primary/45 rounded-xl h-[100px] flex flex-col items-center justify-center text-center p-4 cursor-pointer bg-gray-bg/10 hover:bg-primary-light/5 transition-all">
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handlePdfUpload}
+                  disabled={uploadingPdf}
+                  className="hidden"
+                />
+                {uploadingPdf ? (
+                  <span className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Upload className="w-5 h-5 text-gray-light mb-1 hover:text-primary" />
+                    <span className="text-[9px] font-bold text-gray-dark uppercase tracking-wider">Upload Itinerary PDF</span>
+                  </>
+                )}
+              </label>
+            )}
+          </div>
+
+          {/* Important Trail Notes */}
+          <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-card space-y-4">
+            <h3 className="font-sans font-extrabold text-sm text-black flex items-center gap-2 uppercase tracking-wide">
+              <Info className="w-4.5 h-4.5 text-primary shrink-0" />
+              <span>Important Trail Notes</span>
+            </h3>
+            <textarea
+              rows={3}
+              placeholder="e.g. Carry valid photo ID, heavy woolens, no plastic trails policy..."
+              {...register("notes")}
+              className="w-full px-4 py-3 bg-gray-bg border border-gray-border rounded-xl text-xs font-semibold focus:outline-none focus:bg-white resize-none"
+            />
           </div>
 
           {/* Settings / Publish status */}

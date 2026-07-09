@@ -7,14 +7,30 @@ import { ChevronLeft, ChevronRight, MapPin, X, ZoomIn } from "lucide-react";
 import { getOptimizedImageUrl } from "@/lib/utils";
 import Image from "next/image";
 
-export default function GalleryFramesSection() {
+interface GalleryFramesSectionProps {
+  images?: string[];
+}
+
+export default function GalleryFramesSection({ images }: GalleryFramesSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const { data: items = [], isLoading } = useQuery({
+  const { data: globalItems = [], isLoading: globalLoading } = useQuery({
     queryKey: ["public-gallery"],
     queryFn: () => publicApi.getGalleryItems(),
+    enabled: !images,
   });
+
+  const items = images
+    ? images.map((img, idx) => ({
+        id: String(idx),
+        imageUrl: img,
+        caption: `Camp & Trail Photo ${idx + 1}`,
+        placeName: "Camp & Trail",
+      }))
+    : globalItems;
+
+  const isLoading = !images && globalLoading;
 
   const showNav = items.length > 4;
 

@@ -4,14 +4,16 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { publicApi } from "@/lib/api";
 import { getOptimizedImageUrl, formatPrice } from "@/lib/utils";
-import { Compass, Star, MapPin, Sparkles, AlertCircle, Share2 } from "lucide-react";
+import { Compass, Star, MapPin, Sparkles, AlertCircle, Share2, Download } from "lucide-react";
 import ItineraryAccordion from "@/components/public/packages/ItineraryAccordion";
 import InclusionsExclusions from "@/components/public/packages/InclusionsExclusions";
-import PackageGallery from "@/components/public/packages/PackageGallery";
+import GalleryFramesSection from "@/components/public/home/GalleryFramesSection";
 import ReviewCard from "@/components/public/packages/ReviewCard";
 import BookingPanel from "@/components/public/packages/BookingPanel";
 import FloatingBookCTA from "@/components/public/packages/FloatingBookCTA";
 import QuickCallForm from "@/components/public/destinations/QuickCallForm";
+import PackageVideoTestimonials from "@/components/public/packages/PackageVideoTestimonials";
+import QueryProvider from "@/components/shared/QueryProvider";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +111,21 @@ export default async function PackageDetailPage({ params }: PageProps) {
                 <span className="text-white/40">({pkg.reviews?.length || 0} approved reviews)</span>
               </div>
             </div>
+
+            {pkg.pdfUrl && (
+              <div className="pt-2">
+                <a
+                  href={pkg.pdfUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-[#facc15] hover:bg-[#eab308] text-black font-black text-xs uppercase tracking-wider px-6 py-3.5 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Itinerary</span>
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -162,20 +179,27 @@ export default async function PackageDetailPage({ params }: PageProps) {
                 <AlertCircle className="w-5 h-5 shrink-0" />
                 <span>Important Trail Notes</span>
               </h4>
-              <p className="text-xs text-primary/80 leading-relaxed font-semibold">
+              <p className="text-xs text-primary/80 leading-relaxed font-semibold whitespace-pre-line">
                 {pkg.notes}
               </p>
             </div>
           )}
 
-          {/* Photo Gallery */}
+          {/* Photo Gallery - Curving Curved Panorama Ribbon adapted from homepage */}
           {pkg.galleryImages && pkg.galleryImages.length > 0 && (
             <div className="space-y-4">
-              <h3 className="font-sans font-extrabold text-lg text-black flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-primary rounded-full" />
-                <span>Camp & Trail Gallery</span>
-              </h3>
-              <PackageGallery images={pkg.galleryImages} />
+              <QueryProvider>
+                <GalleryFramesSection images={pkg.galleryImages} />
+              </QueryProvider>
+            </div>
+          )}
+
+          {/* Video Testimonials Section */}
+          {pkg.testimonials && pkg.testimonials.length > 0 && (
+            <div className="space-y-4">
+              <QueryProvider>
+                <PackageVideoTestimonials testimonials={pkg.testimonials} />
+              </QueryProvider>
             </div>
           )}
 

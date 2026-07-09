@@ -775,5 +775,59 @@ export const adminApi = {
     });
     return await handleResponse(res);
   },
+
+  // ── Package Reviews ──────────────────────────────────────────────────────
+  async getPackageReviews(packageId: string) {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/packages/${packageId}/reviews`, { headers });
+    const json = await handleResponse(res);
+    return json.data || [];
+  },
+
+  async createPackageReview(packageId: string, data: { customerName: string; rating: number; reviewText?: string; reviewImages?: string[]; isApproved?: boolean }) {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/packages/${packageId}/reviews`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(data),
+    });
+    return (await handleResponse(res)).data;
+  },
+
+  async deletePackageReview(packageId: string, reviewId: string) {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/packages/${packageId}/reviews/${reviewId}`, {
+      method: "DELETE",
+      headers,
+    });
+    return await handleResponse(res);
+  },
+
+  // ── Package Video Testimonials ───────────────────────────────────────────
+  async getPackageVideos(packageId: string) {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/packages/${packageId}/testimonials`, { headers });
+    const json = await handleResponse(res);
+    return json.data || [];
+  },
+
+  async createPackageVideo(packageId: string, data: { videoUrl: string; customerName: string; thumbnail?: string; sortOrder?: number }) {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/packages/${packageId}/testimonials`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(data),
+    });
+    return (await handleResponse(res)).data;
+  },
+
+  async deletePackageVideo(packageId: string, videoId: string) {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${BASE_URL}/api/admin/packages/${packageId}/testimonials/${videoId}`, {
+      method: "DELETE",
+      headers,
+    });
+    return await handleResponse(res);
+  },
 };
 
