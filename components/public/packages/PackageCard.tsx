@@ -30,7 +30,7 @@ export default function PackageCard({ pkg, className }: PackageCardProps) {
   return (
     <div
       className={cn(
-        "group relative rounded-3xl overflow-hidden border border-white/10 flex flex-col h-[320px] md:h-[420px] shadow-card hover:shadow-float hover:-translate-y-1.5 transition-all duration-300 select-none",
+        "group relative rounded-3xl overflow-hidden border border-white/10 flex flex-col h-[240px] sm:h-[320px] md:h-[420px] shadow-card hover:shadow-float hover:-translate-y-1.5 transition-all duration-300 select-none",
         className
       )}
     >
@@ -63,11 +63,14 @@ export default function PackageCard({ pkg, className }: PackageCardProps) {
         {/* Pricing Pill (Right) - Styled exactly like the yellow reference badges */}
         <div className="bg-[#FFE500] text-black text-[7px] md:text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-md flex items-center gap-1">
           {originalPrice && discountedPrice && (
-            <span className="line-through text-black/50 font-bold">
+            <span className="line-through text-black/50 font-bold hidden sm:inline">
               {formatPrice(originalPrice)}
             </span>
           )}
-          <span>{formatPrice(displayPrice)}/- onwards</span>
+          <span>
+            {formatPrice(displayPrice)}/-
+            <span className="hidden sm:inline"> onwards</span>
+          </span>
         </div>
       </div>
 

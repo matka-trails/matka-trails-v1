@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { publicApi, PublicPackage } from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
+import PackageCard from "@/components/public/packages/PackageCard";
 import {
   ChevronLeft,
   ChevronRight,
@@ -33,23 +34,29 @@ const slideVariants = {
 };
 
 // ─── Shimmer Skeleton ────────────────────────────────────────────────────────
-function PackageCardSkeleton({ tall = false }: { tall?: boolean }) {
+function PackageCardSkeleton() {
   return (
     <div
-      className={`w-full max-w-[350px] bg-white rounded-3xl overflow-hidden border border-gray-border shadow-lg animate-pulse`}
+      className="w-full max-w-[350px] bg-neutral-900 rounded-3xl overflow-hidden border border-white/5 flex flex-col h-[240px] sm:h-[320px] md:h-[420px] shadow-lg animate-pulse relative p-5 justify-between"
     >
-      <div
-        className={`shimmer-bg w-full ${tall ? "h-[250px]" : "h-[210px]"}`}
-      />
-      <div className="p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="shimmer-bg h-6 w-24 rounded-lg" />
-          <div className="shimmer-bg h-5 w-12 rounded-lg" />
+      {/* Top badges shimmer */}
+      <div className="flex justify-between items-start">
+        <div className="shimmer-bg h-6 w-16 rounded-full bg-neutral-800" />
+        <div className="shimmer-bg h-6 w-24 rounded-full bg-neutral-800" />
+      </div>
+      
+      {/* Bottom text shimmer */}
+      <div className="space-y-3 w-full">
+        {/* Inclusion bar */}
+        <div className="shimmer-bg h-6 w-full rounded-lg bg-neutral-800" />
+        {/* Title */}
+        <div className="shimmer-bg h-7 w-5/6 rounded-md bg-neutral-800" />
+        {/* Meta grid */}
+        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-neutral-800">
+          <div className="shimmer-bg h-4 w-3/4 rounded bg-neutral-800" />
+          <div className="shimmer-bg h-4 w-3/4 rounded bg-neutral-800" />
+          <div className="shimmer-bg h-4 w-full rounded bg-neutral-800 col-span-2" />
         </div>
-        <div className="shimmer-bg h-5 w-4/5 rounded" />
-        <div className="shimmer-bg h-4 w-full rounded" />
-        <div className="shimmer-bg h-4 w-3/5 rounded" />
-        <div className="shimmer-bg h-9 w-full rounded-xl mt-2" />
       </div>
     </div>
   );
@@ -72,183 +79,14 @@ function PackageZigzagCard({
       onClick={onClick}
       className="group relative cursor-pointer w-full max-w-[350px] transition-all duration-300"
     >
-      <div
-        className={`bg-white rounded-3xl overflow-hidden flex flex-col transition-all duration-300 group-hover:-translate-y-2
-          ${
-            isCenter
-              ? "shadow-lg border-2 border-primary"
-              : "shadow-lg border border-gray-border group-hover:shadow-xl"
-          }`}
-      >
-        {/* Cover Image */}
-        <div
-          className="relative overflow-hidden"
-          style={{ height: isCenter ? 250 : 210 }}
-        >
-          {pkg.coverImage ? (
-            <Image
-              src={pkg.coverImage}
-              alt={pkg.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 33vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <div className="w-full h-full bg-neutral-900 flex items-center justify-center">
-              <Compass className="w-10 h-10 text-white/20" />
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-
-          {/* Group type badge */}
-          <div className="absolute top-4 left-4">
-            <span
-              className={`text-[9px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-full shadow
-              ${isCenter ? "bg-primary text-white" : "bg-white/90 text-black"}`}
-            >
-              {pkg.groupType}
-            </span>
-          </div>
-
-          {/* Price overlay */}
-          <div className="absolute bottom-4 right-4 text-right">
-            <span className="text-[9px] text-white/60 uppercase tracking-widest font-bold block leading-none">
-              From
-            </span>
-            <span
-              className={`font-sans font-black italic leading-none
-              ${isCenter ? "text-2xl text-primary" : "text-xl text-white"}`}
-            >
-              {formatPrice(pkg.priceDiscounted || pkg.priceOriginal)}
-            </span>
-          </div>
-
-          {/* Destination */}
-          <div className="absolute bottom-4 left-4 flex items-center gap-1 text-white/80 text-[10px] font-semibold">
-            <MapPin className="w-3 h-3 text-primary" />
-            <span className="truncate max-w-[120px]">
-              {pkg.destination?.name}
-            </span>
-          </div>
-        </div>
-
-        {/* Card Body */}
-        <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-[10px] font-semibold text-gray-light">
-              <span className="flex items-center gap-1.5 bg-gray-bg px-2.5 py-1 rounded-lg text-gray-dark">
-                <Clock className="w-3 h-3 text-primary" />
-                <span>
-                  {pkg.durationDays}D / {pkg.durationNights}N
-                </span>
-              </span>
-              <span className="flex items-center gap-1">
-                <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                <span className="font-bold text-gray-dark">4.8</span>
-              </span>
-            </div>
-
-            <h3
-              className={`font-sans font-extrabold leading-tight text-black group-hover:text-primary transition-colors line-clamp-2
-              ${isCenter ? "text-base" : "text-sm"}`}
-            >
-              {pkg.title}
-            </h3>
-
-            {pkg.summary && (
-              <p className="text-[11px] text-gray-mid line-clamp-2 leading-relaxed">
-                {pkg.summary}
-              </p>
-            )}
-          </div>
-
-          <div className="pt-2">
-            <span
-              className={`inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300
-                ${
-                  isCenter
-                    ? "bg-primary text-white px-5 py-2.5 rounded-xl w-full justify-center shadow-orange hover:bg-primary-dark"
-                    : "bg-white border border-gray-border text-gray-dark hover:border-primary hover:text-primary px-4 py-2 rounded-xl"
-                }`}
-            >
-              <span>More Details</span>
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Mobile Snap Card ────────────────────────────────────────────────────────
-function MobilePackageCard({ pkg }: { pkg: PublicPackage }) {
-  return (
-    <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-border flex flex-col h-full w-full justify-between">
-      {/* Cover Image */}
-      <div className="relative overflow-hidden h-[240px] w-full shrink-0">
-        {pkg.coverImage ? (
-          <Image
-            src={pkg.coverImage}
-            alt={pkg.title}
-            fill
-            sizes="85vw"
-            className="object-cover transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full bg-neutral-900 flex items-center justify-center">
-            <Compass className="w-8 h-8 text-white/20" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-
-        <div className="absolute top-3 left-3">
-          <span className="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-primary text-white">
-            {pkg.groupType}
-          </span>
-        </div>
-
-        <div className="absolute bottom-3 right-3 text-right">
-          <span className="text-[9px] text-white/60 uppercase tracking-widest font-bold block leading-none">
-            From
-          </span>
-          <span className="font-sans font-black italic text-xl text-primary leading-none">
-            {formatPrice(pkg.priceDiscounted || pkg.priceOriginal)}
-          </span>
-        </div>
-
-        <div className="absolute bottom-3 left-3 flex items-center gap-1 text-white/80 text-[10px] font-semibold">
-          <MapPin className="w-3 h-3 text-primary" />
-          <span className="truncate max-w-[120px]">
-            {pkg.destination?.name}
-          </span>
-        </div>
-      </div>
-
-      {/* Card Body */}
-      <div className="p-4 space-y-2.5 flex-1 flex flex-col justify-between">
-        <div className="space-y-2.5">
-          <div className="flex items-center justify-between text-[10px] font-semibold">
-            <span className="flex items-center gap-1.5 bg-gray-bg px-2 py-1 rounded-lg text-gray-dark">
-              <Clock className="w-3 h-3 text-primary" />
-              {pkg.durationDays}D / {pkg.durationNights}N
-            </span>
-            <span className="flex items-center gap-1 text-gray-mid">
-              <Star className="w-3 h-3 fill-primary text-primary" />
-              <span className="font-bold text-gray-dark">4.8</span>
-            </span>
-          </div>
-
-          <h3 className="font-sans font-extrabold text-sm leading-tight text-black line-clamp-2">
-            {pkg.title}
-          </h3>
-        </div>
-
-        <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider bg-primary text-white px-4 py-2 mt-2 rounded-xl w-full justify-center">
-          <span>More Details</span>
-          <ArrowRight className="w-3 h-3" />
-        </span>
-      </div>
+      <PackageCard
+        pkg={pkg}
+        className={
+          isCenter
+            ? "border-2 border-primary shadow-lg shadow-primary/20 scale-[1.02]"
+            : "shadow-lg border border-white/10"
+        }
+      />
     </div>
   );
 }
@@ -387,7 +225,7 @@ export default function PackagesShowcase() {
                   style={{ width: "89%", minWidth: "89%" }}
                   onClick={() => router.push(`/packages/${pkg.slug}`)}
                 >
-                  <MobilePackageCard pkg={pkg} />
+                  <PackageCard pkg={pkg} />
                 </div>
               ))}
             </div>
@@ -425,7 +263,7 @@ export default function PackagesShowcase() {
                       Explore our most popular tour packages.
                     </p>
                   </div>
-                  <PackageCardSkeleton tall />
+                  <PackageCardSkeleton />
                 </div>
                 <div className="flex justify-center pt-16">
                   <PackageCardSkeleton />
