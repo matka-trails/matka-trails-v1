@@ -115,8 +115,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
             {pkg.pdfUrl && (
               <div className="pt-2">
                 <a
-                  href={pkg.pdfUrl}
-                  download
+                  href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001"}/api/public/packages/${pkg.id}/download-pdf`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-[#facc15] hover:bg-[#eab308] text-black font-black text-xs uppercase tracking-wider px-6 py-3.5 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"

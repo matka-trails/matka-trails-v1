@@ -42,7 +42,7 @@ export default function BookingPanel({ pkg }: BookingPanelProps) {
       <div>
         {pkg.pdfUrl ? (
           <a
-            href={pkg.pdfUrl}
+            href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001"}/api/public/packages/${pkg.id}/download-pdf`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary-dark text-white font-bold text-xs uppercase tracking-wide py-4 rounded-xl shadow-orange transition-all duration-300 animate-pulse"
