@@ -715,21 +715,33 @@ export default function PackageForm({ initialData }: PackageFormProps) {
             </h3>
 
             {pdfUrl ? (
-              <div className="flex items-center justify-between border border-gray-border rounded-xl p-3.5 bg-gray-bg/25">
-                <div className="min-w-0 flex-1 pr-3">
-                  <span className="text-[10px] text-gray-light font-bold uppercase block">Uploaded Itinerary PDF</span>
-                  <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary font-bold hover:underline truncate block">
-                    {pdfUrl.substring(pdfUrl.lastIndexOf("/") + 1)}
-                  </a>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setPdfUrl("")}
-                  className="p-1.5 rounded-lg border border-rose-100 bg-rose-50 text-rose-500 hover:bg-rose-100 cursor-pointer"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              (() => {
+                const isObjectId = /^[0-9a-fA-F]{24}$/.test(pdfUrl);
+                const downloadUrl = isObjectId
+                  ? `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001"}/api/public/packages/files/${pdfUrl}`
+                  : pdfUrl;
+                const fileName = isObjectId
+                  ? `itinerary-document-${pdfUrl.substring(0, 6)}.pdf`
+                  : pdfUrl.substring(pdfUrl.lastIndexOf("/") + 1);
+
+                return (
+                  <div className="flex items-center justify-between border border-gray-border rounded-xl p-3.5 bg-gray-bg/25">
+                    <div className="min-w-0 flex-1 pr-3">
+                      <span className="text-[10px] text-gray-light font-bold uppercase block">Uploaded Itinerary PDF</span>
+                      <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary font-bold hover:underline truncate block">
+                        {fileName}
+                      </a>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPdfUrl("")}
+                      className="p-1.5 rounded-lg border border-rose-100 bg-rose-50 text-rose-500 hover:bg-rose-100 cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                );
+              })()
             ) : (
               <label className="border-2 border-dashed border-gray-border hover:border-primary/45 rounded-xl h-[100px] flex flex-col items-center justify-center text-center p-4 cursor-pointer bg-gray-bg/10 hover:bg-primary-light/5 transition-all">
                 <input
