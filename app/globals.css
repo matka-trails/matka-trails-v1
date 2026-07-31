@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Gistesy';
+  src: url('/Gistesy.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-gistesy {
+  font-family: 'Gistesy', var(--font-reminder), 'Comic Sans MS', cursive;
+}
+
 .font-reminder {
   font-family: var(--font-reminder), 'Comic Sans MS', cursive;
 }
