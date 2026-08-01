@@ -103,7 +103,7 @@ export default function MobileNav() {
             className="flex flex-col gap-4 mt-8"
           >
             <a
-              href="https://wa.me/919999999999"
+              href="https://wa.me/918294709846"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 w-full border border-white/10 hover:border-primary/50 py-4 rounded-xl text-sm font-semibold tracking-wide uppercase transition-colors"

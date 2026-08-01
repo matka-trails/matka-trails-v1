@@ -520,7 +520,7 @@ export default function HeroConfigEditor() {
               <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <p className="text-xs text-amber-700 font-medium leading-relaxed">
                 <strong>WebP format strongly recommended</strong> for carousel images — much smaller file size,
-                faster load. Optimal size: 800×450px (16:9 ratio).
+                faster load. Optimal size: 1774×887px (2:1 ratio).
               </p>
             </div>
 
@@ -625,7 +625,7 @@ export default function HeroConfigEditor() {
                 onChange={setNewSlideImage}
                 folder="matka-trails/hero"
                 label="Poster Image (WebP recommended)"
-                aspectRatio="16/9"
+                aspectRatio="1774/887"
               />
 
               <div>

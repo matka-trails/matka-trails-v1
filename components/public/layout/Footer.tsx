@@ -102,7 +102,9 @@ export default function Footer() {
           </div>
           <div className="flex items-center gap-3">
             <Phone className="w-5 h-5 text-primary shrink-0" />
-            <p>+91 99999 99999</p>
+            <a href="tel:+918294709846" className="hover:text-primary transition-colors">
+              +91 82947 09846
+            </a>
           </div>
         </div>
       </div>
@@ -132,7 +134,7 @@ export default function Footer() {
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.95 1.96C5.12 19.5 12 19.5 12 19.5s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
           </a>
           <a
-            href="https://wa.me/919999999999"
+            href="https://wa.me/918294709846"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-primary transition-colors"

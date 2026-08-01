@@ -79,8 +79,8 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Call Us</p>
-                  <a href="tel:+919999999999" className="text-sm font-bold text-white hover:text-primary transition-colors">
-                    +91 99999 99999
+                  <a href="tel:+918294709846" className="text-sm font-bold text-white hover:text-primary transition-colors">
+                    +91 82947 09846
                   </a>
                 </div>
               </div>

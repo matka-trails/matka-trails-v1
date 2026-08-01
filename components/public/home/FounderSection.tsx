@@ -8,9 +8,9 @@ export default function FounderSection() {
   return (
     <section className="py-10 md:py-14 bg-gradient-to-b from-white via-cream-bg/30 to-orange-50/20 relative overflow-hidden select-none">
       
-      {/* ── 1. HUGE FADED BACKGROUND WATERMARK TEXT: SAMEER (Increased opacity & brand tone) ── */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none select-none z-0 overflow-hidden">
-        <span className="font-black text-[85px] sm:text-[140px] md:text-[180px] text-gray-300/50 uppercase tracking-[0.22em] sm:tracking-[0.26em] leading-none block transform scale-x-105">
+      {/* ── 1. HUGE FADED BACKGROUND WATERMARK TEXT: SAMEER (Responsive watermark) ── */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none select-none z-0 overflow-hidden flex justify-center">
+        <span className="font-black text-[18.5vw] sm:text-[130px] md:text-[170px] text-gray-300/50 uppercase tracking-[0.11em] sm:tracking-[0.22em] leading-none block whitespace-nowrap">
           SAMEER
         </span>
       </div>

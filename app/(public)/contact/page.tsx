@@ -56,7 +56,9 @@ export default function ContactPage() {
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-primary">
                   <Phone className="w-4 h-4" />
                 </div>
-                <span>+91 99999 99999</span>
+                <a href="tel:+918294709846" className="hover:text-primary transition-colors">
+                  +91 82947 09846
+                </a>
               </div>
 
               <div className="flex items-start gap-3">

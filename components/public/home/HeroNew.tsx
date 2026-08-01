@@ -177,21 +177,22 @@ function MobileCarousel({
     };
   }, [startAuto]);
 
-  const goTo = (n: number) => {
-    setCurrent((n + slides.length) % slides.length);
-    startAuto();
-  };
+  const goTo = useCallback(
+    (n: number) => {
+      setCurrent((n + slides.length) % slides.length);
+      startAuto();
+    },
+    [slides.length, startAuto]
+  );
 
   if (slides.length === 0) return null;
 
-  const slide = slides[current];
-  const href = slide.destination ? `/destinations/${slide.destination.slug}` : "#";
-
   return (
-    <div className="w-full px-5">
+    <div className="w-full px-3 sm:px-5">
+      {/* Fixed aspect ratio container (1774/887 = 2:1 ratio) so height NEVER collapses or shifts content below */}
       <div
-        className="relative w-full rounded-2xl overflow-hidden shadow-xl"
-        style={{ aspectRatio: "16/9" }}
+        className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-black/5"
+        style={{ aspectRatio: "1774 / 887" }}
         onTouchStart={(e) => {
           touchStart.current = e.touches[0].clientX;
         }}
@@ -200,55 +201,69 @@ function MobileCarousel({
           if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
         }}
       >
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            key={current}
-            initial={{ x: "100%", opacity: 0.6 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "-100%", opacity: 0.6 }}
-            transition={{ duration: 0.38, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            <Link href={href} className="block w-full h-full">
-              <Image
-                src={getOptimizedImageUrl(slide.imageUrl, 800) || slide.imageUrl}
-                alt={slide.destination?.name || "Trip poster"}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 90vw, 600px"
-                priority={current === 0}
-              />
-            </Link>
-          </motion.div>
-        </AnimatePresence>
+        {/* Render all slides stacked in DOM so images preload and fade smoothly without re-fetching */}
+        {slides.map((slide, i) => {
+          const href = slide.destination ? `/destinations/${slide.destination.slug}` : "#";
+          const isActive = i === current;
+
+          return (
+            <motion.div
+              key={slide.imageUrl + i}
+              initial={false}
+              animate={{
+                opacity: isActive ? 1 : 0,
+                scale: isActive ? 1 : 0.98,
+              }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className={`absolute inset-0 w-full h-full ${
+                isActive ? "pointer-events-auto z-10" : "pointer-events-none z-0"
+              }`}
+            >
+              <Link href={href} className="block w-full h-full">
+                <img
+                  src={slide.imageUrl}
+                  alt={slide.destination?.name || "Trip poster"}
+                  className="w-full h-full object-contain block rounded-2xl"
+                  loading={i === 0 ? "eager" : "lazy"}
+                />
+              </Link>
+            </motion.div>
+          );
+        })}
 
         {/* Nav arrows */}
-        <button
-          onClick={() => goTo(current - 1)}
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white z-10"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => goTo(current + 1)}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white z-10"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
+        {slides.length > 1 && (
+          <>
+            <button
+              onClick={() => goTo(current - 1)}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white z-20 hover:bg-black/60 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => goTo(current + 1)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white z-20 hover:bg-black/60 transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </>
+        )}
       </div>
 
       {/* Dots */}
-      <div className="flex justify-center gap-1.5 mt-2.5">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === current ? "bg-primary w-5" : "bg-gray-300 w-1.5"
-            }`}
-          />
-        ))}
-      </div>
+      {slides.length > 1 && (
+        <div className="flex justify-center gap-1.5 mt-2.5">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === current ? "bg-primary w-5" : "bg-gray-300 w-1.5"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -524,11 +539,10 @@ export default function HeroNew() {
   return (
     <>
       {/* ═══════════════════════════════════════════════════════════════════
-          DESKTOP HERO (lg and above) — 75vh
+          DESKTOP HERO (lg and above) — responsive min-height for all laptop screens
       ═══════════════════════════════════════════════════════════════════ */}
       <section
-        className="hidden lg:block relative w-full overflow-y-visible overflow-x-clip select-none z-20"
-        style={{ height: "75vh" }}
+        className="hidden lg:block relative w-full overflow-y-visible overflow-x-clip select-none z-20 min-h-[580px] lg:min-h-[620px] xl:min-h-[680px] pt-[92px] pb-12 flex items-center"
       >
         {/* Background */}
         <div className="absolute inset-0 z-0">
@@ -546,10 +560,10 @@ export default function HeroNew() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 h-full max-w-7xl mx-auto px-12 flex items-center justify-between gap-12">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-12 flex items-center justify-between gap-12">
           
           {/* ── LEFT: Text + Search ── */}
-          <div className="flex-1 flex flex-col gap-6 max-w-[500px] pt-14 lg:pt-16">
+          <div className="flex-1 flex flex-col gap-5 max-w-[500px]">
 
             <div className="flex flex-col gap-1.5">
               {/* Eyebrow text styled as normal text with font-reminder and same small size */}
@@ -717,7 +731,7 @@ export default function HeroNew() {
           </h1>
 
           <p className="text-[11px] text-gray-mid font-medium mt-1 mb-3">
-            Treks, getaways & group tours — crafted for you.
+            Treks, getaways & group tours - crafted for you.
           </p>
 
           {/* Search bar */}

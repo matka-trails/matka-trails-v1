@@ -94,7 +94,7 @@ export default function Navbar() {
           {/* Action Buttons */}
           <div className="hidden lg:flex items-center gap-4">
             <a
-              href="https://wa.me/919999999999"
+              href="https://wa.me/918294709846"
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
