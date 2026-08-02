@@ -542,7 +542,7 @@ export default function HeroNew() {
           DESKTOP HERO (lg and above) — responsive min-height for all laptop screens
       ═══════════════════════════════════════════════════════════════════ */}
       <section
-        className="hidden lg:block relative w-full overflow-y-visible overflow-x-clip select-none z-20 min-h-[580px] lg:min-h-[620px] xl:min-h-[680px] pt-[92px] pb-12 flex items-center"
+        className="hidden lg:flex relative w-full overflow-hidden select-none z-10 min-h-[580px] lg:min-h-[620px] xl:min-h-[680px] pt-[92px] pb-16 items-center"
       >
         {/* Background */}
         <div className="absolute inset-0 z-0">
@@ -616,7 +616,7 @@ export default function HeroNew() {
               transition={{ delay: 0.3, duration: 0.5 }}
               className="text-white/65 text-[15px] font-medium leading-relaxed"
             >
-              Weekend getaways, treks & group departures — handcrafted for working professionals.
+              Weekend getaways, treks & group departures - handcrafted for working professionals.
             </motion.p>
 
             {/* Search bar */}

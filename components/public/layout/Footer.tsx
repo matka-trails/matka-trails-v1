@@ -9,103 +9,141 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#111111] text-white pt-16 pb-8 px-6 lg:px-12 border-t border-white/5">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12 border-b border-white/10">
-        
-        {/* Brand Column */}
-        <div className="flex flex-col gap-4">
-          <Link href="/">
-            <div className="h-10 w-[140px] relative overflow-hidden rounded-md border border-white/10 bg-white/5">
-              <Image
-                src="/logo1.png"
-                alt="Matka Trails"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </Link>
-          <p className="text-xs text-white/50 leading-relaxed max-w-[240px] font-medium">
-            Winding trails, group travel, adventure-filled weekends. Solo in, group out. Discover the magic of trekking.
-          </p>
-          <a
-            href="mailto:hello@matkatrails.com"
-            className="flex items-center gap-2 text-sm text-primary font-semibold hover:underline"
-          >
-            <Mail className="w-4 h-4" />
-            <span>hello@matkatrails.com</span>
-          </a>
-        </div>
+      <div className="max-w-7xl mx-auto pb-12 border-b border-white/10">
 
-        {/* Navigation links */}
-        <div>
-          <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-6">
-            Quick Links
-          </h4>
-          <ul className="flex flex-col gap-3 font-semibold text-sm">
-            {[
-              { label: "Home", href: "/" },
-              { label: "Destinations", href: "/destinations" },
-              { label: "Packages", href: "/packages" },
-              { label: "Travel Blog", href: "/blog" },
-              { label: "About Us", href: "/about" },
-            ].map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-white/60 hover:text-primary transition-colors duration-200"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* ── DESKTOP: 4-col grid ── */}
+        <div className="hidden lg:grid lg:grid-cols-4 gap-12">
 
-        {/* Destinations quick filter links */}
-        <div>
-          <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-6">
-            Popular Trails
-          </h4>
-          <ul className="flex flex-col gap-3 font-semibold text-sm text-white/60">
-            <li>
-              <Link href="/packages?destination=Kedarnath" className="hover:text-primary transition-colors">
-                Kedarnath Trek
-              </Link>
-            </li>
-            <li>
-              <Link href="/packages?destination=Rishikesh" className="hover:text-primary transition-colors">
-                Rishikesh Rafting
-              </Link>
-            </li>
-            <li>
-              <Link href="/packages?destination=Manali" className="hover:text-primary transition-colors">
-                Hampta Pass Trek
-              </Link>
-            </li>
-            <li>
-              <Link href="/packages?destination=Spiti" className="hover:text-primary transition-colors">
-                Spiti Valley Expedition
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* Contact info column */}
-        <div className="flex flex-col gap-6 text-sm text-white/60 font-semibold">
-          <div>
-            <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-6 text-white">
-              Contact Office
-            </h4>
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-primary shrink-0" />
-              <p className="leading-relaxed">New Delhi, India</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Phone className="w-5 h-5 text-primary shrink-0" />
-            <a href="tel:+918294709846" className="hover:text-primary transition-colors">
-              +91 82947 09846
+          {/* Brand */}
+          <div className="flex flex-col gap-4">
+            <Link href="/">
+              <div className="h-10 w-[140px] relative overflow-hidden rounded-md border border-white/10 bg-white/5">
+                <Image src="/matka.png" alt="Matka Trails" fill className="object-cover" />
+              </div>
+            </Link>
+            <p className="text-xs text-white/50 leading-relaxed max-w-[240px] font-medium">
+              Winding trails, group travel, adventure-filled weekends. Solo in, group out. Discover the magic of trekking.
+            </p>
+            <a href="mailto:hello@matkatrails.com" className="flex items-center gap-2 text-sm text-primary font-semibold hover:underline">
+              <Mail className="w-4 h-4" />
+              <span>hello@matkatrails.com</span>
             </a>
           </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-6">Quick Links</h4>
+            <ul className="flex flex-col gap-3 font-semibold text-sm">
+              {[
+                { label: "Home", href: "/" },
+                { label: "Destinations", href: "/destinations" },
+                { label: "Packages", href: "/packages" },
+                { label: "Travel Blog", href: "/blog" },
+                { label: "About Us", href: "/about" },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-white/60 hover:text-primary transition-colors duration-200">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Popular Trails */}
+          <div>
+            <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-6">Popular Trails</h4>
+            <ul className="flex flex-col gap-3 font-semibold text-sm text-white/60">
+              <li><Link href="/packages?destination=Kedarnath" className="hover:text-primary transition-colors">Kedarnath Trek</Link></li>
+              <li><Link href="/packages?destination=Rishikesh" className="hover:text-primary transition-colors">Rishikesh Rafting</Link></li>
+              <li><Link href="/packages?destination=Manali" className="hover:text-primary transition-colors">Hampta Pass Trek</Link></li>
+              <li><Link href="/packages?destination=Spiti" className="hover:text-primary transition-colors">Spiti Valley Expedition</Link></li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div className="flex flex-col gap-6 text-sm text-white/60 font-semibold">
+            <div>
+              <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-6 text-white">Contact Office</h4>
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-primary shrink-0" />
+                <p className="leading-relaxed">New Delhi, India</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Phone className="w-5 h-5 text-primary shrink-0" />
+              <a href="tel:+918294709846" className="hover:text-primary transition-colors">+91 82947 09846</a>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ── MOBILE layout ── */}
+        <div className="flex flex-col gap-10 lg:hidden">
+
+          {/* Row 1: Brand — centered */}
+          <div className="flex flex-col items-center text-center gap-4">
+            <Link href="/">
+              <div className="h-10 w-[140px] relative overflow-hidden rounded-md border border-white/10 bg-white/5">
+                <Image src="/matka.png" alt="Matka Trails" fill className="object-cover" />
+              </div>
+            </Link>
+            <p className="text-xs text-white/50 leading-relaxed max-w-[260px] font-medium">
+              Winding trails, group travel, adventure-filled weekends. Solo in, group out. Discover the magic of trekking.
+            </p>
+            <a href="mailto:hello@matkatrails.com" className="flex items-center gap-2 text-sm text-primary font-semibold hover:underline">
+              <Mail className="w-4 h-4" />
+              <span>hello@matkatrails.com</span>
+            </a>
+          </div>
+
+          {/* Row 2: Quick Links + Popular Trails — side by side */}
+          <div className="grid grid-cols-2 gap-6">
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-4">Quick Links</h4>
+              <ul className="flex flex-col gap-3 font-semibold text-sm">
+                {[
+                  { label: "Home", href: "/" },
+                  { label: "Destinations", href: "/destinations" },
+                  { label: "Packages", href: "/packages" },
+                  { label: "Travel Blog", href: "/blog" },
+                  { label: "About Us", href: "/about" },
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-white/60 hover:text-primary transition-colors duration-200">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Popular Trails */}
+            <div>
+              <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-4">Popular Trails</h4>
+              <ul className="flex flex-col gap-3 font-semibold text-sm text-white/60">
+                <li><Link href="/packages?destination=Kedarnath" className="hover:text-primary transition-colors">Kedarnath Trek</Link></li>
+                <li><Link href="/packages?destination=Rishikesh" className="hover:text-primary transition-colors">Rishikesh Rafting</Link></li>
+                <li><Link href="/packages?destination=Manali" className="hover:text-primary transition-colors">Hampta Pass Trek</Link></li>
+                <li><Link href="/packages?destination=Spiti" className="hover:text-primary transition-colors">Spiti Valley Expedition</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Row 3: Contact — centered */}
+          <div className="flex flex-col items-center text-center gap-4 text-sm text-white/60 font-semibold">
+            <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest text-white">Contact Office</h4>
+            <div className="flex items-center gap-3">
+              <MapPin className="w-5 h-5 text-primary shrink-0" />
+              <p>New Delhi, India</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Phone className="w-5 h-5 text-primary shrink-0" />
+              <a href="tel:+918294709846" className="hover:text-primary transition-colors">+91 82947 09846</a>
+            </div>
+          </div>
+
         </div>
       </div>
 

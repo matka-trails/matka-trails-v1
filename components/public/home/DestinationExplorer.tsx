@@ -149,15 +149,15 @@ export default function DestinationExplorer() {
     : "/packages";
 
   return (
-    <section className="w-full bg-white py-5 lg:py-8">
+    <section className="w-full bg-white pb-5 lg:pb-12 pt-2 lg:pt-0 relative z-30 rounded-t-none lg:rounded-t-[48px] mt-0 lg:-mt-12 shadow-none lg:shadow-[0_-12px_50px_rgba(0,0,0,0.20)]">
       <div className="max-w-7xl mx-auto">
 
-        {/* ── Circles Row — wrapped in a stylized, centered capsule container ── */}
-        <div className="px-5 lg:px-8 max-w-5xl mx-auto mb-6">
-          <div className="w-fit max-w-full mx-auto bg-gradient-to-r from-orange-50/30 via-white to-orange-50/30 border border-orange-100/80 shadow-[0_4px_25px_rgba(255,102,0,0.04)] rounded-[3rem] px-8 py-4 flex items-center justify-center">
+        {/* ── Circles Row ── */}
+        <div className="px-5 lg:px-8 max-w-5xl mx-auto mb-6 pt-4 lg:pt-10">
+          <div className="w-fit max-w-full mx-auto">
             <div
               ref={scrollRef}
-              className="flex justify-start lg:justify-center gap-5 lg:gap-7 overflow-x-auto w-full scrollbar-hide"
+              className="flex justify-start lg:justify-center gap-5 lg:gap-8 overflow-x-auto w-full scrollbar-hide"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {allCircles.map((circle) => {
@@ -171,7 +171,7 @@ export default function DestinationExplorer() {
                   >
                     {/* Ring + Circle */}
                     <div
-                      className="relative rounded-full p-[3px] transition-all duration-300"
+                      className="relative rounded-full p-[3px] transition-all duration-300 transform group-hover:scale-105"
                       style={{
                         width: "68px",
                         height: "68px",
@@ -197,16 +197,21 @@ export default function DestinationExplorer() {
                       </div>
                     </div>
 
-                    {/* Name */}
-                    <span
-                      className={`text-[11px] font-bold text-center leading-tight max-w-[72px] truncate transition-colors ${
-                        isActive
-                          ? "text-primary"
-                          : "text-gray-500 group-hover:text-gray-800"
-                      }`}
-                    >
-                      {circle.name}
-                    </span>
+                    {/* Name + Active Underline Bar */}
+                    <div className="flex flex-col items-center">
+                      <span
+                        className={`text-xs font-bold text-center leading-tight max-w-[76px] truncate transition-colors ${
+                          isActive
+                            ? "text-primary font-black"
+                            : "text-gray-600 group-hover:text-gray-900"
+                        }`}
+                      >
+                        {circle.name}
+                      </span>
+                      {isActive && (
+                        <div className="w-6 h-[3px] bg-primary rounded-full mt-1 shadow-xs" />
+                      )}
+                    </div>
                   </button>
                 );
               })}
