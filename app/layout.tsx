@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
+import FloatingWidgets from "@/components/public/layout/FloatingWidgets";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -51,6 +52,7 @@ export default function RootLayout({
           }}
         />
         {children}
+        <FloatingWidgets />
       </body>
     </html>
   );
