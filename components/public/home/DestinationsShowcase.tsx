@@ -205,7 +205,7 @@ export default function DestinationsShowcase() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
             {destinations.map((dest) => (
               <DestinationShowcaseCard
-                key={dest.id || dest._id}
+                key={dest.id}
                 dest={dest}
                 width={170}
                 height={210}
