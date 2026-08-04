@@ -75,7 +75,7 @@ export default function MobileNav() {
           animate="open"
           exit="closed"
           variants={menuVariants}
-          className="fixed inset-0 z-30 bg-[#111111] text-white flex flex-col pt-24 px-6 pb-8"
+          className="fixed inset-0 z-50 bg-[#111111] text-white flex flex-col pt-24 px-6 pb-8"
         >
           {/* Main Links */}
           <div className="flex-1 flex flex-col gap-1 justify-center">

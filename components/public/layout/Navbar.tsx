@@ -40,7 +40,7 @@ export default function Navbar() {
     <>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-40 h-[72px] transition-all duration-300",
+          "fixed top-0 left-0 right-0 z-[55] h-[72px] transition-all duration-300",
           isHomePage
             ? scrolled
               ? "bg-white/95 backdrop-blur-md shadow-card border-b border-gray-border text-foreground"

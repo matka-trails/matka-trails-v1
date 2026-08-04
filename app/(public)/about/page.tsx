@@ -66,6 +66,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     id: "anuj",
     name: "Anuj Gupta",
     role: "Chief Technology Officer",
+    // image: "/anuj.png",
     badge: "CTO",
     bio: "The tech brain behind Matka Trails platform, crafting digital experiences as smooth as mountain breezes.",
 
