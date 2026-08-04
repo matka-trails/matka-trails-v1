@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, Clock, MapPin, Star, Sparkles, Frown } from "lucide-react";
+import { ChevronRight, MapPin, Frown } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { publicApi, PublicDestination, PublicPackage } from "@/lib/api";
-import { getOptimizedImageUrl, formatPrice } from "@/lib/utils";
+import { getOptimizedImageUrl } from "@/lib/utils";
 import PackageCard from "@/components/public/packages/PackageCard";
 
 // ─── "New Launches" virtual id ────────────────────────────────────────────────
@@ -86,56 +87,47 @@ function PackageGrid({ packages, loading }: { packages: PublicPackage[]; loading
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function DestinationExplorer() {
-  const [destinations, setDestinations] = useState<PublicDestination[]>([]);
   const [selected, setSelected] = useState<DestinationCircle | null>(null);
-  const [packages, setPackages] = useState<PublicPackage[]>([]);
-  const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // ── Fetch destinations (cached for 5 min, survives navigation) ──────────────
+  const { data: destinations = [] } = useQuery<PublicDestination[]>({
+    queryKey: ["public-destinations"],
+    queryFn: () => publicApi.getDestinations(),
+    staleTime: 5 * 60 * 1000,   // 5 minutes — won't refetch on navigation back
+    gcTime: 10 * 60 * 1000,     // keep in cache for 10 minutes
+    select: (data) => data.filter((d) => (d.packageCount || 0) > 0),
+  });
+
+  // Auto-select first destination once data is loaded (only if nothing is selected)
   useEffect(() => {
-    publicApi
-      .getDestinations()
-      .then((res) => {
-        const withPackages = res.filter((d) => (d.packageCount || 0) > 0);
-        setDestinations(withPackages);
-        if (withPackages.length > 0) {
-          const first = withPackages[0];
-          setSelected({
-            id: first.id,
-            name: first.name,
-            slug: first.slug,
-            coverImage: first.coverImage,
-          });
-        }
-      })
-      .catch(() => {});
-  }, []);
+    if (destinations.length > 0 && !selected) {
+      const first = destinations[0];
+      setSelected({
+        id: first.id,
+        name: first.name,
+        slug: first.slug,
+        coverImage: first.coverImage,
+      });
+    }
+  }, [destinations]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Fetch packages on selection change
-  useEffect(() => {
-    if (!selected) return;
-    setLoading(true);
-    setPackages([]);
-
-    const go = async () => {
-      try {
-        if (selected.slug) {
-          const res = await publicApi.getPackages({
-            destination: selected.slug,
-            status: "PUBLISHED",
-            limit: 4,
-          });
-          setPackages(res.packages);
-        }
-      } catch {
-        setPackages([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    go();
-  }, [selected?.id]);
+  // ── Fetch packages for selected destination (cached per destination) ─────────
+  const { data: packages = [], isFetching: packagesLoading } = useQuery<PublicPackage[]>({
+    queryKey: ["destination-packages", selected?.slug],
+    queryFn: async () => {
+      if (!selected?.slug) return [];
+      const res = await publicApi.getPackages({
+        destination: selected.slug,
+        status: "PUBLISHED",
+        limit: 4,
+      });
+      return res.packages;
+    },
+    enabled: !!selected?.slug,
+    staleTime: 5 * 60 * 1000,   // 5 minutes per destination tab
+    gcTime: 10 * 60 * 1000,
+  });
 
   const allCircles: DestinationCircle[] = destinations.map((d) => ({
     id: d.id,
@@ -231,7 +223,7 @@ export default function DestinationExplorer() {
               className="mt-5 px-5 lg:px-8"
             >
               {/* Empty state */}
-              {!loading && packages.length === 0 && (
+              {!packagesLoading && packages.length === 0 && (
                 <div className="py-10 flex flex-col items-center text-center gap-3">
                   <div className="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center">
                     <Frown className="w-7 h-7 text-primary/60" />
@@ -250,12 +242,12 @@ export default function DestinationExplorer() {
               )}
 
               {/* Package grid */}
-              {(loading || packages.length > 0) && (
+              {(packagesLoading || packages.length > 0) && (
                 <>
-                  <PackageGrid packages={packages} loading={loading} />
+                  <PackageGrid packages={packages} loading={packagesLoading} />
 
                   {/* View All button — only when packages exist */}
-                  {!loading && packages.length > 0 && (
+                  {!packagesLoading && packages.length > 0 && (
                     <div className="flex justify-center mt-6">
                       <Link
                         href={viewAllHref}
@@ -275,3 +267,4 @@ export default function DestinationExplorer() {
     </section>
   );
 }
+

@@ -13,57 +13,54 @@ import FounderSection from "@/components/public/home/FounderSection";
 import StatsBar from "@/components/public/home/StatsBar";
 import BlogPreview from "@/components/public/home/BlogPreview";
 import ContactSection from "@/components/public/home/ContactSection";
-import QueryProvider from "@/components/shared/QueryProvider";
 
 export default function Home() {
   return (
-    <QueryProvider>
-      <div className="flex flex-col w-full min-h-screen">
-        {/* 1. New Immersive Hero */}
-        <HeroNew />
+    <div className="flex flex-col w-full min-h-screen">
+      {/* 1. New Immersive Hero */}
+      <HeroNew />
 
-        {/* 2. Destination Explorer — Story circles + packages grid */}
-        <DestinationExplorer />
+      {/* 2. Destination Explorer — Story circles + packages grid */}
+      <DestinationExplorer />
 
-        {/* 2. Trust Credentials Strip */}
-        {/* <TrustStrip /> */}
+      {/* 2. Trust Credentials Strip */}
+      {/* <TrustStrip /> */}
 
-        {/* 3. Bidirectional CSS Ticker */}
-        {/* <TickerSection /> */}
+      {/* 3. Bidirectional CSS Ticker */}
+      {/* <TickerSection /> */}
 
-        {/* 4. Featured Packages — zig-zag 3-card carousel */}
-        <PackagesShowcase />
+      {/* 4. Featured Packages — zig-zag 3-card carousel */}
+      <PackagesShowcase />
 
-        {/* 5. SVG connecting How It Works */}
-        <HowItWorks />
+      {/* 5. SVG connecting How It Works */}
+      <HowItWorks />
 
-        {/* 6. Staggered "hanging cards" destinations */}
-        <DestinationsShowcase />
+      {/* 6. Staggered "hanging cards" destinations */}
+      <DestinationsShowcase />
 
-        {/* 7. Pitch Value Propositions */}
-        <WhyMatkaTrails />
+      {/* 7. Pitch Value Propositions */}
+      <WhyMatkaTrails />
 
-        {/* 7.2 Journey in Frames Panorama Gallery */}
-        <GalleryFramesSection />
+      {/* 7.2 Journey in Frames Panorama Gallery */}
+      <GalleryFramesSection />
 
-        {/* 7.5 Real People Real Stories Video Testimonials */}
-        <VideoTestimonialsSection />
+      {/* 7.5 Real People Real Stories Video Testimonials */}
+      <VideoTestimonialsSection />
 
-        {/* 7.6 Traveler Reviews Ticker/Carousel */}
-        <TextTestimonialsSection />
+      {/* 7.6 Traveler Reviews Ticker/Carousel */}
+      <TextTestimonialsSection />
 
-        {/* 7.7 Founder Background & Trust Credentials */}
-        <FounderSection />
+      {/* 7.7 Founder Background & Trust Credentials */}
+      <FounderSection />
 
-        {/* 8. Stats count-ups */}
-        {/* <StatsBar /> */}
+      {/* 8. Stats count-ups */}
+      {/* <StatsBar /> */}
 
-        {/* 9. Blogs Grid & call-to-action */}
-        <BlogPreview />
+      {/* 9. Blogs Grid & call-to-action */}
+      <BlogPreview />
 
-        {/* 10. Contact Form */}
-        <ContactSection />
-      </div>
-    </QueryProvider>
+      {/* 10. Contact Form */}
+      <ContactSection />
+    </div>
   );
 }

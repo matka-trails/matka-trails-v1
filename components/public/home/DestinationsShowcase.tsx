@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
 import { publicApi } from "@/lib/api";
 import { MapPin, Compass, ArrowRight } from "lucide-react";
 
@@ -57,16 +57,13 @@ function DestinationShowcaseCard({
 }
 
 export default function DestinationsShowcase() {
-  const [destinations, setDestinations] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Reuses the same cached response as DestinationExplorer — no extra API call
+  const { data: allDests = [], isLoading } = useQuery({
+    queryKey: ["public-destinations"],
+    queryFn: () => publicApi.getDestinations(),
+  });
 
-  useEffect(() => {
-    publicApi
-      .getDestinations()
-      .then((data) => setDestinations(data.slice(0, 6)))
-      .catch((err) => console.error("Destinations fetch error", err))
-      .finally(() => setIsLoading(false));
-  }, []);
+  const destinations = allDests.slice(0, 6);
 
   if (!isLoading && destinations.length === 0) return null;
 

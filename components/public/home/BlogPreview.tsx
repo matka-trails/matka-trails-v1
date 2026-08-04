@@ -1,35 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
 import { useUiStore } from "@/stores/uiStore";
 import { Sparkles, Calendar, BookOpen, MoveRight } from "lucide-react";
 import { publicApi, PublicBlog } from "@/lib/api";
 import { cn, formatDate, getOptimizedImageUrl } from "@/lib/utils";
 
 export default function BlogPreview() {
-  const [blogs, setBlogs] = useState<any[]>([]);
   const { openBookingModal } = useUiStore();
 
-  useEffect(() => {
-    publicApi
-      .getBlogs({ limit: 9 })
-      .then((data) => {
-        if (data && data.length > 0) {
-          const mapped = data.map((b) => ({
-            id: b.id,
-            title: b.title,
-            slug: b.slug,
-            coverImage: b.coverImage || "",
-            createdAt: b.createdAt,
-            tags: b.tags || ["Stories"],
-          }));
-          setBlogs(mapped);
-        }
-      })
-      .catch((err) => console.log("Failed to fetch preview blogs", err));
-  }, []);
+  const { data: blogsRaw = [] } = useQuery<PublicBlog[]>({
+    queryKey: ["public-blogs-preview"],
+    queryFn: () => publicApi.getBlogs({ limit: 9 }),
+  });
+
+  const blogs = blogsRaw.map((b) => ({
+    id: b.id,
+    title: b.title,
+    slug: b.slug,
+    coverImage: b.coverImage || "",
+    createdAt: b.createdAt,
+    tags: b.tags || ["Stories"],
+  }));
 
   if (blogs.length === 0) {
     return (

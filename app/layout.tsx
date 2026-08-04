@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import FloatingWidgets from "@/components/public/layout/FloatingWidgets";
+import QueryProvider from "@/components/shared/QueryProvider";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -33,26 +34,28 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable} ${pfReminder.variable} h-full`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: "#111111",
-              color: "#ffffff",
-              fontFamily: "var(--font-montserrat), sans-serif",
-              borderRadius: "var(--radius-md)",
-            },
-            success: {
-              iconTheme: {
-                primary: "#ff6600",
-                secondary: "#ffffff",
+        <QueryProvider>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: "#111111",
+                color: "#ffffff",
+                fontFamily: "var(--font-montserrat), sans-serif",
+                borderRadius: "var(--radius-md)",
               },
-            },
-          }}
-        />
-        {children}
-        <FloatingWidgets />
+              success: {
+                iconTheme: {
+                  primary: "#ff6600",
+                  secondary: "#ffffff",
+                },
+              },
+            }}
+          />
+          {children}
+          <FloatingWidgets />
+        </QueryProvider>
       </body>
     </html>
   );

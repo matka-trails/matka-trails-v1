@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -94,8 +95,11 @@ function PackageZigzagCard({
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function PackagesShowcase() {
   const router = useRouter();
-  const [packages, setPackages] = useState<PublicPackage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: packages = [], isFetching: isLoading } = useQuery({
+    queryKey: ["public-packages-showcase"],
+    queryFn: () => publicApi.getPackages({ limit: 12 }).then((r) => r.packages),
+  });
+
   const [startIdx, setStartIdx] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("left");
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
@@ -103,16 +107,12 @@ export default function PackagesShowcase() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Set initial active card once data is available
   useEffect(() => {
-    publicApi
-      .getPackages({ limit: 12 })
-      .then((res) => {
-        setPackages(res.packages);
-        if (res.packages.length > 0) setActiveCardId(res.packages[0].id);
-      })
-      .catch((err) => console.error("Packages fetch error", err))
-      .finally(() => setIsLoading(false));
-  }, []);
+    if (packages.length > 0 && !activeCardId) {
+      setActiveCardId(packages[0].id);
+    }
+  }, [packages]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // IntersectionObserver for mobile active card
   useEffect(() => {

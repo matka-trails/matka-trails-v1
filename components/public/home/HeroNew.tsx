@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { publicApi, HeroConfig, PublicDestination, PublicPackage } from "@/lib/api";
 import { getOptimizedImageUrl } from "@/lib/utils";
 
@@ -274,19 +275,22 @@ function HeroSearchBar({ variant }: { variant: "desktop" | "mobile" }) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [destinations, setDestinations] = useState<PublicDestination[]>([]);
-  const [allPackages, setAllPackages] = useState<PublicPackage[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    publicApi.getDestinations().then(setDestinations).catch(() => {});
-    publicApi
-      .getPackages({ status: "PUBLISHED", limit: 200 })
-      .then((res) => setAllPackages(res.packages))
-      .catch(() => {});
-  }, []);
+  // Reuse cached destinations list (shared with DestinationExplorer & DestinationsShowcase)
+  const { data: destinations = [] } = useQuery<PublicDestination[]>({
+    queryKey: ["public-destinations"],
+    queryFn: () => publicApi.getDestinations(),
+  });
+
+  // Full package index for search autocomplete — cached once
+  const { data: allPackages = [] } = useQuery<PublicPackage[]>({
+    queryKey: ["public-packages-search"],
+    queryFn: () =>
+      publicApi.getPackages({ status: "PUBLISHED", limit: 200 }).then((r) => r.packages),
+  });
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -515,14 +519,11 @@ function HeroSearchBar({ variant }: { variant: "desktop" | "mobile" }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function HeroNew() {
-  const [config, setConfig] = useState<HeroConfig | null>(null);
-
-  useEffect(() => {
-    publicApi
-      .getHeroConfig()
-      .then(setConfig)
-      .catch(() => {});
-  }, []);
+  // Cached hero config — won't refetch on navigation back
+  const { data: config = null } = useQuery<HeroConfig | null>({
+    queryKey: ["public-hero"],
+    queryFn: () => publicApi.getHeroConfig(),
+  });
 
   const bgImage = config?.desktopBgImage || DEFAULT_BG;
   const words =
