@@ -105,7 +105,7 @@ export default function BlogPreview() {
               <Link
                 key={blog.id}
                 href={`/blog/${blog.slug}`}
-                className="group flex flex-col bg-white border border-gray-border hover:border-primary/20 hover:shadow-card hover:-translate-y-1.5 transition-all duration-300 rounded-2xl overflow-hidden cursor-pointer"
+                className="group flex flex-col bg-white border border-gray-border hover:border-primary/20 hover:shadow-card hover:-translate-y-1.5 active:scale-[0.98] active:border-primary active:ring-2 active:ring-primary/40 transition-all duration-150 rounded-2xl overflow-hidden cursor-pointer"
               >
                 {/* Image */}
                 <div className="h-[180px] relative overflow-hidden bg-gray-bg shrink-0">

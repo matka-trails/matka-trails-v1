@@ -1,14 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useUiStore } from "@/stores/uiStore";
 import { publicApi } from "@/lib/api";
 import PackageCard from "./PackageCard";
 import { Frown, Compass } from "lucide-react";
 
 export default function PackageGrid() {
-  const router = useRouter();
   const { data, isLoading, error } = useQuery({
     queryKey: ["public-packages"],
     queryFn: () => publicApi.getPackages(),
@@ -66,13 +65,13 @@ export default function PackageGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {packages.map((pkg) => (
-        <div
+        <Link
           key={pkg.id}
-          className="cursor-pointer"
-          onClick={() => router.push(`/packages/${pkg.slug}`)}
+          href={`/packages/${pkg.slug}`}
+          className="block cursor-pointer active:scale-[0.98] transition-transform"
         >
           <PackageCard pkg={pkg} />
-        </div>
+        </Link>
       ))}
     </div>
   );

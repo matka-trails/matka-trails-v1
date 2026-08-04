@@ -22,7 +22,7 @@ function DestinationShowcaseCard({
     >
       {/* Card Image */}
       <div
-        className="relative overflow-hidden bg-gray-bg border border-gray-border/60 rounded-3xl shadow-md group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300"
+        className="relative overflow-hidden bg-gray-bg border border-gray-border/60 rounded-3xl shadow-md group-hover:shadow-xl group-hover:-translate-y-1 active:scale-[0.96] active:border-primary active:ring-2 active:ring-primary/40 transition-all duration-150"
         style={{ width, height }}
       >
         {dest.coverImage ? (

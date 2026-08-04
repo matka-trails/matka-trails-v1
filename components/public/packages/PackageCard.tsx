@@ -30,7 +30,7 @@ export default function PackageCard({ pkg, className }: PackageCardProps) {
   return (
     <div
       className={cn(
-        "group relative rounded-3xl overflow-hidden border border-white/10 flex flex-col h-[240px] sm:h-[320px] md:h-[420px] shadow-card hover:shadow-float hover:-translate-y-1.5 transition-all duration-300 select-none",
+        "group relative rounded-3xl overflow-hidden border border-white/10 flex flex-col h-[240px] sm:h-[320px] md:h-[420px] shadow-card hover:shadow-float hover:-translate-y-1.5 active:scale-[0.97] active:border-primary/80 active:ring-2 active:ring-primary/50 transition-all duration-200 select-none cursor-pointer",
         className
       )}
     >

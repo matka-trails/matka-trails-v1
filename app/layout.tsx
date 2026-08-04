@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import FloatingWidgets from "@/components/public/layout/FloatingWidgets";
 import QueryProvider from "@/components/shared/QueryProvider";
+import TopProgressBar from "@/components/shared/TopProgressBar";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -35,6 +37,9 @@ export default function RootLayout({
     <html lang="en" className={`${montserrat.variable} ${pfReminder.variable} h-full`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         <QueryProvider>
+          <Suspense fallback={null}>
+            <TopProgressBar />
+          </Suspense>
           <Toaster
             position="bottom-right"
             toastOptions={{

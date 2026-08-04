@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -67,18 +66,16 @@ function PackageCardSkeleton() {
 function PackageZigzagCard({
   pkg,
   slot,
-  onClick,
 }: {
   pkg: PublicPackage;
   slot: number;
-  onClick: () => void;
 }) {
   const isCenter = slot === 1;
 
   return (
-    <div
-      onClick={onClick}
-      className="group relative cursor-pointer w-full max-w-[350px] transition-all duration-300"
+    <Link
+      href={`/packages/${pkg.slug}`}
+      className="group relative cursor-pointer w-full max-w-[350px] transition-all duration-300 block active:scale-[0.97]"
     >
       <PackageCard
         pkg={pkg}
@@ -88,13 +85,12 @@ function PackageZigzagCard({
             : "shadow-lg border border-white/10"
         }
       />
-    </div>
+    </Link>
   );
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function PackagesShowcase() {
-  const router = useRouter();
   const { data: packages = [], isFetching: isLoading } = useQuery({
     queryKey: ["public-packages-showcase"],
     queryFn: () => publicApi.getPackages({ limit: 12 }).then((r) => r.packages),
@@ -105,7 +101,7 @@ export default function PackagesShowcase() {
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const animating = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]);
 
   // Set initial active card once data is available
   useEffect(() => {
@@ -211,22 +207,22 @@ export default function PackagesShowcase() {
               className="flex overflow-x-auto snap-x snap-mandatory gap-2 px-4 pb-6 scrollbar-hide items-stretch"
             >
               {packages.map((pkg, idx) => (
-                <div
+                <Link
                   key={pkg.id}
+                  href={`/packages/${pkg.slug}`}
                   data-pkgid={pkg.id}
                   ref={(el) => {
                     cardRefs.current[idx] = el;
                   }}
-                  className={`shrink-0 snap-center transition-all duration-300 cursor-pointer flex flex-col ${
+                  className={`shrink-0 snap-center transition-all duration-300 cursor-pointer flex flex-col active:scale-[0.97] ${
                     activeCardId === pkg.id
                       ? "opacity-100 scale-100"
                       : "opacity-60 scale-[0.97]"
                   }`}
                   style={{ width: "89%", minWidth: "89%" }}
-                  onClick={() => router.push(`/packages/${pkg.slug}`)}
                 >
                   <PackageCard pkg={pkg} />
-                </div>
+                </Link>
               ))}
             </div>
           )}
@@ -288,9 +284,6 @@ export default function PackagesShowcase() {
                         <PackageZigzagCard
                           pkg={visiblePkgs[0]}
                           slot={0}
-                          onClick={() =>
-                            router.push(`/packages/${visiblePkgs[0].slug}`)
-                          }
                         />
                       </motion.div>
                     )}
@@ -327,9 +320,6 @@ export default function PackagesShowcase() {
                           <PackageZigzagCard
                             pkg={visiblePkgs[1]}
                             slot={1}
-                            onClick={() =>
-                              router.push(`/packages/${visiblePkgs[1].slug}`)
-                            }
                           />
                         </motion.div>
                       )}
@@ -354,9 +344,6 @@ export default function PackagesShowcase() {
                         <PackageZigzagCard
                           pkg={visiblePkgs[2]}
                           slot={2}
-                          onClick={() =>
-                            router.push(`/packages/${visiblePkgs[2].slug}`)
-                          }
                         />
                       </motion.div>
                     )}
